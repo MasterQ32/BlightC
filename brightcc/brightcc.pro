@@ -27,7 +27,10 @@ HEADERS += \
   src/codegen.hpp \
   src/io.hpp \
   src/lexer.hpp \
+  src/location.hh \
   src/parser.hpp \
-  src/lemon-parser.h
+  src/lemon-parser.h \
+  src/position.hh \
+  src/stack.hh
 
 DISTFILES +=

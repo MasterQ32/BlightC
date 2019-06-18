@@ -46,26 +46,12 @@
   namespace yy
   {
     // Return the next token.
-    auto yylex (Parser & drv) -> parser::symbol_type
-    {
-      static int count = 0;
-      switch (int stage = count++)
-        {
-        case 0:
-          return parser::make_TEXT ("I have three numbers for you.");
-        case 1: case 2: case 3:
-          return parser::make_NUMBER (stage);
-        case 4:
-          return parser::make_TEXT ("And that's all!");
-        default:
-          return parser::symbol_type { };
-        }
-    }
+    parser::symbol_type yylex (Parser & drv);
   }
-#line 46 "/home/felix/projects/bright-c/brightcc/src/bison-parser.yy" // lalr1.cc:435
+#line 32 "/home/felix/projects/bright-c/brightcc/src/bison-parser.yy" // lalr1.cc:435
 
 #include "parser.hpp"
-#line 51 "/home/felix/projects/bright-c/brightcc/src/bison-parser.yy" // lalr1.cc:435
+#line 37 "/home/felix/projects/bright-c/brightcc/src/bison-parser.yy" // lalr1.cc:435
 
   // Print a list of strings.
   auto
@@ -82,7 +68,7 @@
     return o << '}';
   }
 
-#line 86 "bison-parser.tab.cc" // lalr1.cc:435
+#line 72 "bison-parser.tab.cc" // lalr1.cc:435
 
 
 #ifndef YY_
@@ -158,7 +144,7 @@
 
 
 namespace yy {
-#line 162 "bison-parser.tab.cc" // lalr1.cc:510
+#line 148 "bison-parser.tab.cc" // lalr1.cc:510
 
   /* Return YYSTR after stripping away unnecessary quotes and
      backslashes, so that it's suitable for yyerror.  The heuristic is
@@ -266,19 +252,6 @@ namespace yy {
   {
     switch (that.type_get ())
     {
-      case 11: // NUMBER
-        value.YY_MOVE_OR_COPY< int > (YY_MOVE (that.value));
-        break;
-
-      case 10: // TEXT
-      case 14: // item
-        value.YY_MOVE_OR_COPY< std::string > (YY_MOVE (that.value));
-        break;
-
-      case 15: // list
-        value.YY_MOVE_OR_COPY< std::vector<std::string> > (YY_MOVE (that.value));
-        break;
-
       default:
         break;
     }
@@ -294,19 +267,6 @@ namespace yy {
   {
     switch (that.type_get ())
     {
-      case 11: // NUMBER
-        value.move< int > (YY_MOVE (that.value));
-        break;
-
-      case 10: // TEXT
-      case 14: // item
-        value.move< std::string > (YY_MOVE (that.value));
-        break;
-
-      case 15: // list
-        value.move< std::vector<std::string> > (YY_MOVE (that.value));
-        break;
-
       default:
         break;
     }
@@ -322,19 +282,6 @@ namespace yy {
     state = that.state;
     switch (that.type_get ())
     {
-      case 11: // NUMBER
-        value.move< int > (that.value);
-        break;
-
-      case 10: // TEXT
-      case 14: // item
-        value.move< std::string > (that.value);
-        break;
-
-      case 15: // list
-        value.move< std::vector<std::string> > (that.value);
-        break;
-
       default:
         break;
     }
@@ -370,35 +317,7 @@ namespace yy {
 #endif
     yyo << (yytype < yyntokens_ ? "token" : "nterm")
         << ' ' << yytname_[yytype] << " (";
-    switch (yytype)
-    {
-      case 10: // TEXT
-#line 80 "/home/felix/projects/bright-c/brightcc/src/bison-parser.yy" // lalr1.cc:676
-        { yyo << yysym.value.template as < std::string > (); }
-#line 379 "bison-parser.tab.cc" // lalr1.cc:676
-        break;
-
-      case 11: // NUMBER
-#line 80 "/home/felix/projects/bright-c/brightcc/src/bison-parser.yy" // lalr1.cc:676
-        { yyo << yysym.value.template as < int > (); }
-#line 385 "bison-parser.tab.cc" // lalr1.cc:676
-        break;
-
-      case 14: // item
-#line 80 "/home/felix/projects/bright-c/brightcc/src/bison-parser.yy" // lalr1.cc:676
-        { yyo << yysym.value.template as < std::string > (); }
-#line 391 "bison-parser.tab.cc" // lalr1.cc:676
-        break;
-
-      case 15: // list
-#line 80 "/home/felix/projects/bright-c/brightcc/src/bison-parser.yy" // lalr1.cc:676
-        { yyo << yysym.value.template as < std::vector<std::string> > (); }
-#line 397 "bison-parser.tab.cc" // lalr1.cc:676
-        break;
-
-      default:
-        break;
-    }
+    YYUSE (yytype);
     yyo << ')';
   }
 #endif
@@ -607,19 +526,6 @@ namespace yy {
          when using variants.  */
       switch (yyr1_[yyn])
     {
-      case 11: // NUMBER
-        yylhs.value.emplace< int > ();
-        break;
-
-      case 10: // TEXT
-      case 14: // item
-        yylhs.value.emplace< std::string > ();
-        break;
-
-      case 15: // list
-        yylhs.value.emplace< std::vector<std::string> > ();
-        break;
-
       default:
         break;
     }
@@ -634,38 +540,8 @@ namespace yy {
         {
           switch (yyn)
             {
-  case 2:
-#line 93 "/home/felix/projects/bright-c/brightcc/src/bison-parser.yy" // lalr1.cc:919
-    { std::cout << yystack_[0].value.as < std::vector<std::string> > () << '\n'; }
-#line 641 "bison-parser.tab.cc" // lalr1.cc:919
-    break;
 
-  case 3:
-#line 96 "/home/felix/projects/bright-c/brightcc/src/bison-parser.yy" // lalr1.cc:919
-    { yylhs.value.as < std::string > () = yystack_[0].value.as < std::string > (); }
-#line 647 "bison-parser.tab.cc" // lalr1.cc:919
-    break;
-
-  case 4:
-#line 97 "/home/felix/projects/bright-c/brightcc/src/bison-parser.yy" // lalr1.cc:919
-    { yylhs.value.as < std::string > () = std::to_string (yystack_[0].value.as < int > ()); }
-#line 653 "bison-parser.tab.cc" // lalr1.cc:919
-    break;
-
-  case 5:
-#line 101 "/home/felix/projects/bright-c/brightcc/src/bison-parser.yy" // lalr1.cc:919
-    { /* Generates an empty string list */ }
-#line 659 "bison-parser.tab.cc" // lalr1.cc:919
-    break;
-
-  case 6:
-#line 102 "/home/felix/projects/bright-c/brightcc/src/bison-parser.yy" // lalr1.cc:919
-    { yylhs.value.as < std::vector<std::string> > () = yystack_[1].value.as < std::vector<std::string> > (); yylhs.value.as < std::vector<std::string> > ().push_back (yystack_[0].value.as < std::string > ()); }
-#line 665 "bison-parser.tab.cc" // lalr1.cc:919
-    break;
-
-
-#line 669 "bison-parser.tab.cc" // lalr1.cc:919
+#line 545 "bison-parser.tab.cc" // lalr1.cc:919
             default:
               break;
             }
@@ -931,62 +807,99 @@ namespace yy {
   }
 
 
-  const signed char parser::yypact_ninf_ = -11;
+  const signed char parser::yypact_ninf_ = -69;
 
   const signed char parser::yytable_ninf_ = -1;
 
   const signed char
   parser::yypact_[] =
   {
-     -11,     2,   -10,   -11,   -11,   -11,   -11
+      14,   -69,   -69,   -69,   -69,   -69,   -69,   -17,   -17,   -17,
+     -69,   -69,   -69,   -69,    54,   -20,    54,   -69,    -1,   -69,
+     -69,     0,   -69,   -69,   -69,   -69,   -69,     4,   -68,   -69,
+     -69,   -61,   -69,   -69
   };
 
   const unsigned char
   parser::yydefact_[] =
   {
-       5,     0,     2,     1,     3,     4,     6
+       0,    19,     3,     2,    10,    11,    12,    13,     0,     0,
+      14,    15,    18,     4,     0,     5,     0,    16,     0,    22,
+      23,     0,     9,     7,     8,    17,     6,     0,     0,     1,
+      24,     0,    21,    20
   };
 
   const signed char
   parser::yypgoto_[] =
   {
-     -11,   -11,   -11,   -11
+     -69,   -69,    -4,    -3,    -2,   -69,    -8,   -69
   };
 
   const signed char
   parser::yydefgoto_[] =
   {
-      -1,     1,     6,     2
+      -1,    15,    16,    17,    18,    19,    20,    21
   };
 
   const unsigned char
   parser::yytable_[] =
   {
-       4,     5,     3
+      29,    32,    28,     1,    22,    23,    24,    31,    33,     2,
+       3,    26,    25,    30,    27,     0,     0,     1,     4,     5,
+       6,     7,     8,     9,    10,    11,     0,     0,     0,     2,
+       3,     0,     0,     0,     0,     4,     5,     6,     7,     8,
+       9,    10,    11,     2,     3,    13,    12,     0,     0,     4,
+       5,     6,     7,     8,     9,    10,    11,     1,     0,     0,
+      12,     0,     0,     0,     0,    13,     0,     0,    14,     0,
+       0,     0,     0,     0,     0,     0,     0,     0,     0,    13,
+       0,     0,    14,     0,     0,     0,     0,     0,     0,     4,
+       5,     6,     7,     8,     9,    10,    11,     0,     0,     0,
+      12,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,    14
   };
 
-  const unsigned char
+  const signed char
   parser::yycheck_[] =
   {
-      10,    11,     0
+       0,    69,     3,     3,     7,     8,     9,     3,    69,    29,
+      30,    15,    14,    21,    16,    -1,    -1,     3,    35,    36,
+      37,    38,    39,    40,    41,    42,    -1,    -1,    -1,    29,
+      30,    -1,    -1,    -1,    -1,    35,    36,    37,    38,    39,
+      40,    41,    42,    29,    30,    65,    46,    -1,    -1,    35,
+      36,    37,    38,    39,    40,    41,    42,     3,    -1,    -1,
+      46,    -1,    -1,    -1,    -1,    65,    -1,    -1,    68,    -1,
+      -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    65,
+      -1,    -1,    68,    -1,    -1,    -1,    -1,    -1,    -1,    35,
+      36,    37,    38,    39,    40,    41,    42,    -1,    -1,    -1,
+      46,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
+      -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
+      -1,    -1,    68
   };
 
   const unsigned char
   parser::yystos_[] =
   {
-       0,    13,    15,     0,    10,    11,    14
+       0,     3,    29,    30,    35,    36,    37,    38,    39,    40,
+      41,    42,    46,    65,    68,    71,    72,    73,    74,    75,
+      76,    77,    73,    73,    73,    74,    72,    74,     3,     0,
+      76,     3,    69,    69
   };
 
   const unsigned char
   parser::yyr1_[] =
   {
-       0,    12,    13,    14,    14,    15,    15
+       0,    70,    71,    71,    71,    72,    72,    73,    73,    73,
+      73,    73,    73,    73,    73,    73,    74,    74,    74,    74,
+      75,    75,    76,    77,    77
   };
 
   const unsigned char
   parser::yyr2_[] =
   {
-       0,     2,     1,     1,     1,     0,     2
+       0,     2,     1,     1,     1,     1,     2,     2,     2,     2,
+       1,     1,     1,     1,     1,     1,     1,     2,     1,     1,
+       4,     3,     1,     1,     2
   };
 
 
@@ -996,16 +909,28 @@ namespace yy {
   const char*
   const parser::yytname_[] =
   {
-  "\"end of file\"", "error", "$undefined", "\":=\"", "\"-\"", "\"+\"",
-  "\"*\"", "\"/\"", "\"(\"", "\")\"", "TEXT", "NUMBER", "$accept",
-  "result", "item", "list", YY_NULLPTR
+  "$end", "error", "$undefined", "IDENTIFIER", "CONSTANT",
+  "STRING_LITERAL", "SIZEOF", "PTR_OP", "INC_OP", "DEC_OP", "LEFT_OP",
+  "RIGHT_OP", "LE_OP", "GE_OP", "EQ_OP", "NE_OP", "AND_OP", "OR_OP",
+  "MUL_ASSIGN", "DIV_ASSIGN", "MOD_ASSIGN", "ADD_ASSIGN", "SUB_ASSIGN",
+  "LEFT_ASSIGN", "RIGHT_ASSIGN", "AND_ASSIGN", "XOR_ASSIGN", "OR_ASSIGN",
+  "TYPEDEF", "EXTERN", "STATIC", "AUTO", "REGISTER", "INLINE", "RESTRICT",
+  "CHAR", "SHORT", "INT", "LONG", "SIGNED", "UNSIGNED", "FLOAT", "DOUBLE",
+  "CONST", "VOLATILE", "VOID", "BOOL", "COMPLEX", "IMAGINARY", "STRUCT",
+  "UNION", "ENUM", "ELLIPSIS", "CASE", "DEFAULT", "IF", "ELSE", "SWITCH",
+  "WHILE", "DO", "FOR", "GOTO", "CONTINUE", "BREAK", "RETURN", "EXPORT",
+  "ASYNC", "AWAIT", "'*'", "';'", "$accept", "modifier", "modifiers",
+  "primitive_type", "type", "variable_declaration", "declaration",
+  "translation_unit", YY_NULLPTR
   };
 
 #if YYDEBUG
   const unsigned char
   parser::yyrline_[] =
   {
-       0,    93,    93,    96,    97,   101,   102
+       0,    77,    77,    78,    79,    83,    84,    88,    89,    90,
+      91,    92,    93,    94,    95,    96,   100,   101,   102,   103,
+     107,   108,   118,   123,   124
   };
 
   // Print the state stack on the debug stream.
@@ -1040,11 +965,19 @@ namespace yy {
 
 
 } // yy
-#line 1044 "bison-parser.tab.cc" // lalr1.cc:1242
-#line 105 "/home/felix/projects/bright-c/brightcc/src/bison-parser.yy" // lalr1.cc:1243
+#line 969 "bison-parser.tab.cc" // lalr1.cc:1242
+#line 126 "/home/felix/projects/bright-c/brightcc/src/bison-parser.yy" // lalr1.cc:1243
+
 
 void yy::parser::error (/* const location_type& l,*/ const std::string& m)
 {
   // std::cerr << l << ": " << m << '\n';
   std::cerr << "error: " << m << '\n';
 }
+
+// Return the next token.
+yy::parser::symbol_type yy::yylex (Parser & drv)
+{
+  return drv.get_next_token();
+}
+

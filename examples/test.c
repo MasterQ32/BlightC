@@ -1,6 +1,15 @@
 #include <acknex.h>
 #include <default.c>
 
+int a;
+extern int b;
+static int c;
+export int d;
+extern static export int e;
+
+
+
+/*
 function main()
 {
     level_load(NULL);
@@ -12,3 +21,4 @@ function main()
         wait(1);
     }
 }
+*/

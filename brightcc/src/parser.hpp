@@ -9,14 +9,19 @@
 
 struct Parser
 {
+private:
     yy::parser bison;
+    Lexer * lexer;
 
+public:
     explicit Parser();
     Parser(Parser const &) = delete;
     ~Parser();
 
 
-    void parse();
+    void parse(Lexer & lex);
+
+    yy::parser::symbol_type get_next_token();
 
     int result;
     std::map<std::string, int> variables;
