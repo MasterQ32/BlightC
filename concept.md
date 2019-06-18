@@ -90,17 +90,17 @@ Bright-C has a concept of "modules" whereas each module is defined in its own
 file.
 
 Each module may export a set of symbols (each functions and variables) and types with the
-keyword `public`:
+keyword `export`:
 
 ```c
-public struct Player
+publiexportc struct Player
 {
 
 };
 
-public int player_health;
+export int player_health;
 
-public int get_player_health()
+export int get_player_health()
 {
 	return player_health;
 }
