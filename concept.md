@@ -89,10 +89,15 @@ bool coro_stop(coro_handle);
 Bright-C has a concept of "modules" whereas each module is defined in its own
 file.
 
-Each module may export a set of symbols (each functions and variables) with the
+Each module may export a set of symbols (each functions and variables) and types with the
 keyword `public`:
 
 ```c
+public struct Player
+{
+
+};
+
 public int player_health;
 
 public int get_player_health()
@@ -137,6 +142,7 @@ Modules can ring-reference each other without further work.
 - Removal of implicit integer-pointer-casting (0 is not a pointer)
 - introduction of unsigned types
 - well-defined cast between `var` and a pointer
+- remove C namespaces: no `enum foo` for an enum named `foo`. less typedefs are better
 
 ## Planned / Future Features
 
