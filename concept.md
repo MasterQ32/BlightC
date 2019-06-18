@@ -7,17 +7,17 @@ and modularisation.
 
 ### Major changes
 
-coroutines in Bright-C will not fork implicitly but must be explicitly `spawn`ed
-with a new keyword:
+coroutines in Bright-C will not fork implicitly but must be explicitly spawned
+with the keyword `async`:
 
 ```c
 void foo(int i)
 {
-	spawn bar(i); // starts new coroutine
+	async bar(i); // starts new coroutine
 }
 ```
 
-`spawn` returns a handle to the coroutine (`coro_handle`) so the user can finely
+`async` returns a handle to the coroutine (`coro_handle`) so the user can finely
 control when the coroutine will execute or end.
 
 Marking a function with `async` will enforce the function to be always called
@@ -83,9 +83,6 @@ bool coro_running(coro_handle);
 
 // stops the execution of the coroutine
 bool coro_stop(coro_handle);
-
-// gets the return value of the coroutine if it has returned
-bool coro_get_result(coro_handle, void*, size_t);
 ```
 
 ## Modularisation feature
