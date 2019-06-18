@@ -2,19 +2,24 @@
 #define PARSER_HPP
 
 #include "lexer.hpp"
+#include "bison-parser.tab.hh"
+
+#include <string>
+#include <map>
 
 struct Parser
 {
-    void * lemon;
+    yy::parser bison;
 
     explicit Parser();
     Parser(Parser const &) = delete;
     ~Parser();
 
 
-    void put(Token const & tok);
+    void parse();
 
-    void finalize();
+    int result;
+    std::map<std::string, int> variables;
 };
 
 #endif // PARSER_HPP
