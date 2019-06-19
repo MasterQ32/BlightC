@@ -24,7 +24,7 @@ struct Parser;
   }
 }
 
-// %locations
+%locations
 
 %define parse.trace
 %define parse.error verbose
@@ -54,7 +54,7 @@ struct Parser;
 %define api.token.prefix {TOK_}
 
 // %printer { yyo << $$; } <*>;
-%token IDENTIFIER CONSTANT STRING_LITERAL SIZEOF
+%token IDENTIFIER INT_CONSTANT REAL_CONSTANT STRING_LITERAL SIZEOF
 %token PTR_OP INC_OP DEC_OP LEFT_OP RIGHT_OP LE_OP GE_OP EQ_OP NE_OP
 %token AND_OP OR_OP MUL_ASSIGN DIV_ASSIGN MOD_ASSIGN ADD_ASSIGN
 %token SUB_ASSIGN LEFT_ASSIGN RIGHT_ASSIGN AND_ASSIGN
@@ -65,23 +65,26 @@ struct Parser;
 %token BOOL COMPLEX IMAGINARY
 %token STRUCT UNION ENUM ELLIPSIS
 
+%token TRUE FALSE
 %token CASE DEFAULT IF ELSE SWITCH WHILE DO FOR GOTO CONTINUE BREAK RETURN
 
 /* BrightC tokens and keywords */
-%token EXPORT ASYNC AWAIT
+%token EXPORT ASYNC
+%token AWAIT
 
 %start translation_unit
 %%
 
-modifier
+linkage_modifier
     : STATIC
     | EXTERN
     | EXPORT
+    | ASYNC
 ;
 
-modifiers
-    : modifier
-    | modifier modifiers
+linkage_modifiers
+    : linkage_modifier
+    | linkage_modifier linkage_modifiers
 ;
 
 primitive_type
@@ -94,29 +97,106 @@ primitive_type
     | LONG
     | FLOAT
     | DOUBLE
+    | BOOL
+    | VOID
 ;
 
 type
     : primitive_type
-    | '*' type
-    | BOOL
+    | type '*'
+    | type CONST
+    | IDENTIFIER
+;
+
+literal
+    : TRUE
+    | FALSE
+    | INT_CONSTANT
+    | REAL_CONSTANT
+    | STRING_LITERAL
+    ;
+
+value_expr
+    : literal
+    | IDENTIFIER
+;
+
+expr_list
+    : expr
+    | expr ',' expr_list
+;
+
+expr
+    : value_expr
+    | value_expr '(' ')'
+    | value_expr '(' expr_list ')'
+    | value_expr '[' expr_list ']'
+;
+
+array_size_modifier
+    : '[' expr ']'
+;
+
+array_size_modifiers
+    : array_size_modifier
+    | array_size_modifier array_size_modifiers
+;
+
+scalar_or_array_name
+    : IDENTIFIER array_size_modifiers
     | IDENTIFIER
 ;
 
 variable_declaration
-    : modifiers type IDENTIFIER ';'
-    | type IDENTIFIER ';'
+    : linkage_modifiers type scalar_or_array_name ';'
+    | type scalar_or_array_name ';'
+    | linkage_modifiers type scalar_or_array_name '=' expr ';'
+    | type scalar_or_array_name '=' expr ';'
 ;
 
-/*
-function_declaration:
-
+statement
+    : ';'
+    | expr ';'
+    | block
+    | variable_declaration
+    | WHILE '(' expr ')' statement
 ;
-*/
+
+statement_list
+    : statement
+    | statement statement_list
+;
+
+block
+    :'{' '}'
+    |'{' statement_list '}'
+;
+
+parameter
+    : type scalar_or_array_name
+    | type
+;
+
+parameter_list
+    : parameter
+    | parameter ',' parameter_list
+;
+
+function_signature
+    : type IDENTIFIER '(' ')'
+    | type IDENTIFIER '(' parameter_list ')'
+    | linkage_modifiers type IDENTIFIER '(' ')'
+    | linkage_modifiers type IDENTIFIER '(' parameter_list ')'
+;
+
+function_declaration
+    : function_signature ';'
+    | function_signature block
+;
 
 declaration
     : variable_declaration
-//    | function_declaration
+    | function_declaration
 ;
 
 translation_unit
@@ -125,10 +205,9 @@ translation_unit
 ;
 %%
 
-void yy::parser::error (/* const location_type& l,*/ const std::string& m)
+void yy::parser::error (const location_type& l, const std::string& m)
 {
-  // std::cerr << l << ": " << m << '\n';
-  std::cerr << "error: " << m << '\n';
+  std::cerr << l << ": " << m << std::endl;
 }
 
 // Return the next token.

@@ -2,8 +2,12 @@
 #include "lexer.hpp"
 
 #include <cstring>
+#include <cassert>
+#include <iostream>
 
-Lexer::Lexer(const char *input_stream, size_t length)
+Lexer::Lexer(const char *input_stream, size_t length) :
+    last_parsepoint(input_stream),
+    curcol(1), curline(1)
 {
     memset(string_store.data(), 0, string_store.size());
     stb_c_lexer_init(
@@ -28,6 +32,16 @@ std::optional<Token> Lexer::lex()
     Token tok;
     tok.type = stb.token;
     tok.text = std::string(stb.where_firstchar, stb.where_lastchar + 1);
+
+    assert(stb.where_firstchar >= last_parsepoint);
+    assert(stb.where_firstchar >= stb.input_stream);
+    assert(stb.where_firstchar < stb.eof);
+
+    seek_to(stb.where_firstchar);
+    tok.start = Location { curline, curcol };
+    seek_to(stb.where_firstchar);
+    tok.end = Location { curline, curcol };
+
     switch(stb.token)
     {
     case CLEX_floatlit:
@@ -76,5 +90,20 @@ std::optional<Token> Lexer::lex()
         TRIVIAL(CLEX_shleq, "<<=");
         TRIVIAL(CLEX_shreq, ">>=");
     }
+    assert(tok.type >= 0);
     return std::move(tok);
+}
+
+void Lexer::seek_to(char *pos)
+{
+    while(last_parsepoint < pos)
+    {
+        if(*last_parsepoint == '\n') {
+            curline++;
+            curcol = 1;
+        } else {
+            curcol++;
+        }
+        last_parsepoint++;
+    }
 }

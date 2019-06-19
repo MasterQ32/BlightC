@@ -6,6 +6,7 @@
 
 #include <string>
 #include <map>
+#include <queue>
 
 struct Parser
 {
@@ -19,7 +20,7 @@ public:
     ~Parser();
 
 
-    void parse(Lexer & lex);
+    bool parse(Lexer & lex);
 
     yy::parser::symbol_type get_next_token();
 

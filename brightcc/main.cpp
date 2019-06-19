@@ -15,7 +15,10 @@ int main(int argc, char ** argv)
 
     Parser parser;
 
-    parser.parse(lexer);
+    if(not parser.parse(lexer)) {
+        std::cerr << "Failed to parse the input file!" << std::endl;
+        return 1;
+    }
 
 //    std::optional<Token> tok;
 //    while((tok = lexer.lex()))

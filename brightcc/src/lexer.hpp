@@ -19,6 +19,11 @@ constexpr static uint32_t operator"" _tok(char const * str, size_t len)
     }
 }
 
+struct Location
+{
+    int line, column;
+};
+
 struct Token
 {
     uint32_t static constexpr Undefined        = 0;
@@ -29,19 +34,23 @@ struct Token
     uint32_t static constexpr Identifier       = ~5U;
 
     uint32_t type;
-    int line, column;
     std::string text;
     std::variant<std::monostate, std::string, double, long> value;
+    Location start, end;
 };
 
 struct Lexer
 {
     stb_lexer stb;
     std::array<char, 4096> string_store;
+    char const * last_parsepoint;
+    int curcol, curline;
 
     explicit Lexer(const char *input_stream, size_t length);
 
     std::optional<Token> lex();
+
+    void seek_to(char * pos);
 };
 
 #endif // LEXER_HPP

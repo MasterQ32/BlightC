@@ -92,6 +92,25 @@
 # endif
 #endif
 
+#define YYRHSLOC(Rhs, K) ((Rhs)[K].location)
+/* YYLLOC_DEFAULT -- Set CURRENT to span from RHS[1] to RHS[N].
+   If N is 0, then set CURRENT to the empty location which ends
+   the previous symbol: RHS[0] (always defined).  */
+
+# ifndef YYLLOC_DEFAULT
+#  define YYLLOC_DEFAULT(Current, Rhs, N)                               \
+    do                                                                  \
+      if (N)                                                            \
+        {                                                               \
+          (Current).begin  = YYRHSLOC (Rhs, 1).begin;                   \
+          (Current).end    = YYRHSLOC (Rhs, N).end;                     \
+        }                                                               \
+      else                                                              \
+        {                                                               \
+          (Current).begin = (Current).end = YYRHSLOC (Rhs, 0).end;      \
+        }                                                               \
+    while (false)
+# endif
 
 
 // Suppress unused-variable warnings by "using" E.
@@ -144,7 +163,7 @@
 
 
 namespace yy {
-#line 148 "bison-parser.tab.cc" // lalr1.cc:510
+#line 167 "bison-parser.tab.cc" // lalr1.cc:510
 
   /* Return YYSTR after stripping away unnecessary quotes and
      backslashes, so that it's suitable for yyerror.  The heuristic is
@@ -248,7 +267,7 @@ namespace yy {
   {}
 
   parser::stack_symbol_type::stack_symbol_type (YY_RVREF (stack_symbol_type) that)
-    : super_type (YY_MOVE (that.state))
+    : super_type (YY_MOVE (that.state), YY_MOVE (that.location))
   {
     switch (that.type_get ())
     {
@@ -263,7 +282,7 @@ namespace yy {
   }
 
   parser::stack_symbol_type::stack_symbol_type (state_type s, YY_MOVE_REF (symbol_type) that)
-    : super_type (s)
+    : super_type (s, YY_MOVE (that.location))
   {
     switch (that.type_get ())
     {
@@ -286,6 +305,7 @@ namespace yy {
         break;
     }
 
+    location = that.location;
     // that is emptied.
     that.state = empty_state;
     return *this;
@@ -316,7 +336,8 @@ namespace yy {
       std::abort ();
 #endif
     yyo << (yytype < yyntokens_ ? "token" : "nterm")
-        << ' ' << yytname_[yytype] << " (";
+        << ' ' << yytname_[yytype] << " ("
+        << yysym.location << ": ";
     YYUSE (yytype);
     yyo << ')';
   }
@@ -416,6 +437,9 @@ namespace yy {
 
     /// The lookahead symbol.
     symbol_type yyla;
+
+    /// The locations where the error started and ended.
+    stack_symbol_type yyerror_range[3];
 
     /// The return value of parse ().
     int yyresult;
@@ -531,6 +555,12 @@ namespace yy {
     }
 
 
+      // Default location.
+      {
+        stack_type::slice range (yystack_, yylen);
+        YYLLOC_DEFAULT (yylhs.location, range, yylen);
+        yyerror_range[1].location = yylhs.location;
+      }
 
       // Perform the reduction.
       YY_REDUCE_PRINT (yyn);
@@ -541,7 +571,7 @@ namespace yy {
           switch (yyn)
             {
 
-#line 545 "bison-parser.tab.cc" // lalr1.cc:919
+#line 575 "bison-parser.tab.cc" // lalr1.cc:919
             default:
               break;
             }
@@ -573,10 +603,11 @@ namespace yy {
     if (!yyerrstatus_)
       {
         ++yynerrs_;
-        error (yysyntax_error_ (yystack_[0].state, yyla));
+        error (yyla.location, yysyntax_error_ (yystack_[0].state, yyla));
       }
 
 
+    yyerror_range[1].location = yyla.location;
     if (yyerrstatus_ == 3)
       {
         /* If just tried and failed to reuse lookahead token after an
@@ -637,11 +668,14 @@ namespace yy {
           if (yystack_.size () == 1)
             YYABORT;
 
+          yyerror_range[1].location = yystack_[0].location;
           yy_destroy_ ("Error: popping", yystack_[0]);
           yypop_ ();
           YY_STACK_PRINT ();
         }
 
+      yyerror_range[2].location = yyla.location;
+      YYLLOC_DEFAULT (error_token.location, yyerror_range, 2);
 
       // Shift the error token.
       error_token.state = yyn;
@@ -706,7 +740,7 @@ namespace yy {
   void
   parser::error (const syntax_error& yyexc)
   {
-    error (yyexc.what ());
+    error (yyexc.location, yyexc.what ());
   }
 
   // Generate an error message.
@@ -807,99 +841,158 @@ namespace yy {
   }
 
 
-  const signed char parser::yypact_ninf_ = -69;
+  const signed char parser::yypact_ninf_ = -78;
 
-  const signed char parser::yytable_ninf_ = -1;
+  const signed char parser::yytable_ninf_ = -30;
 
-  const signed char
+  const short
   parser::yypact_[] =
   {
-      14,   -69,   -69,   -69,   -69,   -69,   -69,   -17,   -17,   -17,
-     -69,   -69,   -69,   -69,    54,   -20,    54,   -69,    -1,   -69,
-     -69,     0,   -69,   -69,   -69,   -69,   -69,     4,   -68,   -69,
-     -69,   -61,   -69,   -69
+     177,   -78,   -78,   -78,   -78,   -78,   -78,   201,   201,   201,
+     -78,   -78,   -78,   -78,   -78,   -78,   -29,   152,   -78,    10,
+     -78,   -58,   -78,   -78,   136,   -78,   -78,   -78,   -78,    11,
+     -53,   -78,   -78,   -27,   -78,     6,   -78,   -78,   -78,   -40,
+     -15,   110,    86,   -45,   -78,   -78,    86,    41,   -78,   -78,
+     -78,   -78,   -78,   -39,   -78,   -78,   152,    13,   -78,    25,
+     -18,   -78,    65,   -16,   -78,   122,   -78,    86,   -78,    13,
+       1,    -2,   -78,     3,   -78,    -1,    86,    13,   -45,    23,
+      86,   -78,   -78,   -78,   -78,    19,    17,   -78,   152,   -78,
+     -78,   -78,    35,   -78,    36,    15,     4,   -78,   -78,   -78,
+      65,   -78,    86,   -78,   -78,   -78
   };
 
   const unsigned char
   parser::yydefact_[] =
   {
-       0,    19,     3,     2,    10,    11,    12,    13,     0,     0,
-      14,    15,    18,     4,     0,     5,     0,    16,     0,    22,
-      23,     0,     9,     7,     8,    17,     6,     0,     0,     1,
-      24,     0,    21,    20
+       0,    22,     3,     2,    11,    12,    13,    14,     0,     0,
+      15,    16,    18,    17,     4,     5,     6,     0,    19,     0,
+      64,     0,    65,    66,     0,    10,     8,     9,     7,     0,
+      40,    21,    20,     0,    62,     0,    63,     1,    67,    40,
+       0,     0,     0,    37,    39,    42,     0,    22,    25,    26,
+      27,    23,    24,     0,    45,    52,     0,     0,    28,    32,
+       0,    48,    50,     0,    47,     0,    41,     0,    58,    55,
+      56,     0,    29,     0,    38,     0,     0,     0,    40,     0,
+       0,    46,    51,    53,    60,     0,     0,    54,     0,    59,
+      36,    44,     0,    33,     0,    30,     0,    61,    43,    57,
+       0,    34,     0,    35,    49,    31
   };
 
-  const signed char
+  const short
   parser::yypgoto_[] =
   {
-     -69,   -69,    -4,    -3,    -2,   -69,    -8,   -69
+     -78,   -78,     7,    -3,     0,   -78,   -78,   -77,   155,   -78,
+      56,   -11,     8,    21,    53,    96,   -78,   -50,   -78,   -78,
+      98,   -78
   };
 
   const signed char
   parser::yydefgoto_[] =
   {
-      -1,    15,    16,    17,    18,    19,    20,    21
+      -1,    16,    56,    18,    57,    58,    59,    94,    60,    43,
+      44,    33,    61,    62,    63,    64,    70,    71,    21,    22,
+      23,    24
   };
 
-  const unsigned char
+  const signed char
   parser::yytable_[] =
   {
-      29,    32,    28,     1,    22,    23,    24,    31,    33,     2,
-       3,    26,    25,    30,    27,     0,     0,     1,     4,     5,
-       6,     7,     8,     9,    10,    11,     0,     0,     0,     2,
-       3,     0,     0,     0,     0,     4,     5,     6,     7,     8,
-       9,    10,    11,     2,     3,    13,    12,     0,     0,     4,
-       5,     6,     7,     8,     9,    10,    11,     1,     0,     0,
-      12,     0,     0,     0,     0,    13,     0,     0,    14,     0,
-       0,     0,     0,     0,     0,     0,     0,     0,     0,    13,
-       0,     0,    14,     0,     0,     0,     0,     0,     0,     4,
-       5,     6,     7,     8,     9,    10,    11,     0,     0,     0,
-      12,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,    14
+      19,     2,     3,    96,    25,    26,    27,    17,    20,    47,
+      48,    49,    50,    30,    39,    85,    78,    29,    40,    34,
+      41,    35,    42,    28,    19,   105,    72,    48,    49,    50,
+      42,    17,    20,    65,    76,    42,     2,     3,    99,    14,
+      15,    69,     4,     5,     6,     7,     8,     9,    10,    11,
+      45,    46,    12,    13,    31,    31,    77,    31,    87,    81,
+      51,    52,    66,    67,    83,    69,    40,    53,    47,    48,
+      49,    50,    89,    88,    14,    15,    91,    51,    52,    90,
+     103,    32,    32,    54,    32,    35,    55,   102,    69,    72,
+      48,    49,    50,    97,    98,     2,     3,    93,    79,    74,
+      80,     4,     5,     6,     7,     8,     9,    10,    11,   100,
+     101,    12,    13,     1,   -29,    82,   -29,    36,   -29,    51,
+      52,   104,    38,     0,     0,     1,    53,     0,     0,     0,
+       0,     0,     0,    14,    15,     0,    37,     0,     0,     1,
+      51,    52,    54,     0,    35,     0,     4,     5,     6,     7,
+       8,     9,    10,    11,     0,     1,    12,    13,     4,     5,
+       6,     7,     8,     9,    10,    11,     2,     3,    12,    13,
+       0,     0,     4,     5,     6,     7,     8,     9,    10,    11,
+       1,     0,    12,    13,    68,     0,     0,     0,     4,     5,
+       6,     7,     8,     9,    10,    11,    84,    73,    12,    13,
+       0,    75,     0,     0,    14,    15,     0,     2,     3,     0,
+       0,     0,     0,     4,     5,     6,     7,     8,     9,    10,
+      11,     0,    86,    12,    13,     0,     0,     0,     0,     0,
+       0,    92,     0,     0,    95,    95,     0,     4,     5,     6,
+       7,     8,     9,    10,    11,    14,    15,    12,    13,     0,
+       0,     0,     0,     0,     0,     0,     0,    95
   };
 
   const signed char
   parser::yycheck_[] =
   {
-       0,    69,     3,     3,     7,     8,     9,     3,    69,    29,
-      30,    15,    14,    21,    16,    -1,    -1,     3,    35,    36,
-      37,    38,    39,    40,    41,    42,    -1,    -1,    -1,    29,
-      30,    -1,    -1,    -1,    -1,    35,    36,    37,    38,    39,
-      40,    41,    42,    29,    30,    65,    46,    -1,    -1,    35,
-      36,    37,    38,    39,    40,    41,    42,     3,    -1,    -1,
-      46,    -1,    -1,    -1,    -1,    65,    -1,    -1,    68,    -1,
-      -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    65,
-      -1,    -1,    68,    -1,    -1,    -1,    -1,    -1,    -1,    35,
-      36,    37,    38,    39,    40,    41,    42,    -1,    -1,    -1,
-      46,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
-      -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
-      -1,    -1,    68
+       0,    30,    31,    80,     7,     8,     9,     0,     0,     3,
+       4,     5,     6,     3,     3,    65,     3,    17,    29,    77,
+      73,    79,    75,    16,    24,   102,     3,     4,     5,     6,
+      75,    24,    24,    73,    73,    75,    30,    31,    88,    68,
+      69,    41,    36,    37,    38,    39,    40,    41,    42,    43,
+      77,    78,    46,    47,    44,    44,    56,    44,    69,    77,
+      54,    55,    77,    78,    80,    65,    77,    61,     3,     4,
+       5,     6,    74,    72,    68,    69,    77,    54,    55,    76,
+      76,    71,    71,    77,    71,    79,    80,    72,    88,     3,
+       4,     5,     6,    74,    77,    30,    31,    74,    73,    43,
+      75,    36,    37,    38,    39,    40,    41,    42,    43,    74,
+      74,    46,    47,     3,    73,    62,    75,    21,    77,    54,
+      55,   100,    24,    -1,    -1,     3,    61,    -1,    -1,    -1,
+      -1,    -1,    -1,    68,    69,    -1,     0,    -1,    -1,     3,
+      54,    55,    77,    -1,    79,    -1,    36,    37,    38,    39,
+      40,    41,    42,    43,    -1,     3,    46,    47,    36,    37,
+      38,    39,    40,    41,    42,    43,    30,    31,    46,    47,
+      -1,    -1,    36,    37,    38,    39,    40,    41,    42,    43,
+       3,    -1,    46,    47,    74,    -1,    -1,    -1,    36,    37,
+      38,    39,    40,    41,    42,    43,    74,    42,    46,    47,
+      -1,    46,    -1,    -1,    68,    69,    -1,    30,    31,    -1,
+      -1,    -1,    -1,    36,    37,    38,    39,    40,    41,    42,
+      43,    -1,    67,    46,    47,    -1,    -1,    -1,    -1,    -1,
+      -1,    76,    -1,    -1,    79,    80,    -1,    36,    37,    38,
+      39,    40,    41,    42,    43,    68,    69,    46,    47,    -1,
+      -1,    -1,    -1,    -1,    -1,    -1,    -1,   102
   };
 
   const unsigned char
   parser::yystos_[] =
   {
-       0,     3,    29,    30,    35,    36,    37,    38,    39,    40,
-      41,    42,    46,    65,    68,    71,    72,    73,    74,    75,
-      76,    77,    73,    73,    73,    74,    72,    74,     3,     0,
-      76,     3,    69,    69
+       0,     3,    30,    31,    36,    37,    38,    39,    40,    41,
+      42,    43,    46,    47,    68,    69,    82,    83,    84,    85,
+      93,    99,   100,   101,   102,    84,    84,    84,    83,    85,
+       3,    44,    71,    92,    77,    79,    96,     0,   101,     3,
+      92,    73,    75,    90,    91,    77,    78,     3,     4,     5,
+       6,    54,    55,    61,    77,    80,    83,    85,    86,    87,
+      89,    93,    94,    95,    96,    73,    77,    78,    74,    85,
+      97,    98,     3,    89,    91,    89,    73,    85,     3,    73,
+      75,    77,    95,    80,    74,    98,    89,    92,    72,    74,
+      76,    77,    89,    74,    88,    89,    88,    74,    77,    98,
+      74,    74,    72,    76,    94,    88
   };
 
   const unsigned char
   parser::yyr1_[] =
   {
-       0,    70,    71,    71,    71,    72,    72,    73,    73,    73,
-      73,    73,    73,    73,    73,    73,    74,    74,    74,    74,
-      75,    75,    76,    77,    77
+       0,    81,    82,    82,    82,    82,    83,    83,    84,    84,
+      84,    84,    84,    84,    84,    84,    84,    84,    84,    85,
+      85,    85,    85,    86,    86,    86,    86,    86,    87,    87,
+      88,    88,    89,    89,    89,    89,    90,    91,    91,    92,
+      92,    93,    93,    93,    93,    94,    94,    94,    94,    94,
+      95,    95,    96,    96,    97,    97,    98,    98,    99,    99,
+      99,    99,   100,   100,   101,   101,   102,   102
   };
 
   const unsigned char
   parser::yyr2_[] =
   {
-       0,     2,     1,     1,     1,     1,     2,     2,     2,     2,
-       1,     1,     1,     1,     1,     1,     1,     2,     1,     1,
-       4,     3,     1,     1,     2
+       0,     2,     1,     1,     1,     1,     1,     2,     2,     2,
+       2,     1,     1,     1,     1,     1,     1,     1,     1,     1,
+       2,     2,     1,     1,     1,     1,     1,     1,     1,     1,
+       1,     3,     1,     3,     4,     4,     3,     1,     2,     2,
+       1,     4,     3,     6,     5,     1,     2,     1,     1,     5,
+       1,     2,     2,     3,     2,     1,     1,     3,     4,     5,
+       5,     6,     2,     2,     1,     1,     1,     2
   };
 
 
@@ -909,28 +1002,37 @@ namespace yy {
   const char*
   const parser::yytname_[] =
   {
-  "$end", "error", "$undefined", "IDENTIFIER", "CONSTANT",
-  "STRING_LITERAL", "SIZEOF", "PTR_OP", "INC_OP", "DEC_OP", "LEFT_OP",
-  "RIGHT_OP", "LE_OP", "GE_OP", "EQ_OP", "NE_OP", "AND_OP", "OR_OP",
-  "MUL_ASSIGN", "DIV_ASSIGN", "MOD_ASSIGN", "ADD_ASSIGN", "SUB_ASSIGN",
-  "LEFT_ASSIGN", "RIGHT_ASSIGN", "AND_ASSIGN", "XOR_ASSIGN", "OR_ASSIGN",
-  "TYPEDEF", "EXTERN", "STATIC", "AUTO", "REGISTER", "INLINE", "RESTRICT",
-  "CHAR", "SHORT", "INT", "LONG", "SIGNED", "UNSIGNED", "FLOAT", "DOUBLE",
-  "CONST", "VOLATILE", "VOID", "BOOL", "COMPLEX", "IMAGINARY", "STRUCT",
-  "UNION", "ENUM", "ELLIPSIS", "CASE", "DEFAULT", "IF", "ELSE", "SWITCH",
-  "WHILE", "DO", "FOR", "GOTO", "CONTINUE", "BREAK", "RETURN", "EXPORT",
-  "ASYNC", "AWAIT", "'*'", "';'", "$accept", "modifier", "modifiers",
-  "primitive_type", "type", "variable_declaration", "declaration",
-  "translation_unit", YY_NULLPTR
+  "$end", "error", "$undefined", "IDENTIFIER", "INT_CONSTANT",
+  "REAL_CONSTANT", "STRING_LITERAL", "SIZEOF", "PTR_OP", "INC_OP",
+  "DEC_OP", "LEFT_OP", "RIGHT_OP", "LE_OP", "GE_OP", "EQ_OP", "NE_OP",
+  "AND_OP", "OR_OP", "MUL_ASSIGN", "DIV_ASSIGN", "MOD_ASSIGN",
+  "ADD_ASSIGN", "SUB_ASSIGN", "LEFT_ASSIGN", "RIGHT_ASSIGN", "AND_ASSIGN",
+  "XOR_ASSIGN", "OR_ASSIGN", "TYPEDEF", "EXTERN", "STATIC", "AUTO",
+  "REGISTER", "INLINE", "RESTRICT", "CHAR", "SHORT", "INT", "LONG",
+  "SIGNED", "UNSIGNED", "FLOAT", "DOUBLE", "CONST", "VOLATILE", "VOID",
+  "BOOL", "COMPLEX", "IMAGINARY", "STRUCT", "UNION", "ENUM", "ELLIPSIS",
+  "TRUE", "FALSE", "CASE", "DEFAULT", "IF", "ELSE", "SWITCH", "WHILE",
+  "DO", "FOR", "GOTO", "CONTINUE", "BREAK", "RETURN", "EXPORT", "ASYNC",
+  "AWAIT", "'*'", "','", "'('", "')'", "'['", "']'", "';'", "'='", "'{'",
+  "'}'", "$accept", "linkage_modifier", "linkage_modifiers",
+  "primitive_type", "type", "literal", "value_expr", "expr_list", "expr",
+  "array_size_modifier", "array_size_modifiers", "scalar_or_array_name",
+  "variable_declaration", "statement", "statement_list", "block",
+  "parameter", "parameter_list", "function_signature",
+  "function_declaration", "declaration", "translation_unit", YY_NULLPTR
   };
 
 #if YYDEBUG
   const unsigned char
   parser::yyrline_[] =
   {
-       0,    77,    77,    78,    79,    83,    84,    88,    89,    90,
-      91,    92,    93,    94,    95,    96,   100,   101,   102,   103,
-     107,   108,   118,   123,   124
+       0,    79,    79,    80,    81,    82,    86,    87,    91,    92,
+      93,    94,    95,    96,    97,    98,    99,   100,   101,   105,
+     106,   107,   108,   112,   113,   114,   115,   116,   120,   121,
+     125,   126,   130,   131,   132,   133,   137,   141,   142,   146,
+     147,   151,   152,   153,   154,   158,   159,   160,   161,   162,
+     166,   167,   171,   172,   176,   177,   181,   182,   186,   187,
+     188,   189,   193,   194,   198,   199,   203,   204
   };
 
   // Print the state stack on the debug stream.
@@ -965,14 +1067,13 @@ namespace yy {
 
 
 } // yy
-#line 969 "bison-parser.tab.cc" // lalr1.cc:1242
-#line 126 "/home/felix/projects/bright-c/brightcc/src/bison-parser.yy" // lalr1.cc:1243
+#line 1071 "bison-parser.tab.cc" // lalr1.cc:1242
+#line 206 "/home/felix/projects/bright-c/brightcc/src/bison-parser.yy" // lalr1.cc:1243
 
 
-void yy::parser::error (/* const location_type& l,*/ const std::string& m)
+void yy::parser::error (const location_type& l, const std::string& m)
 {
-  // std::cerr << l << ": " << m << '\n';
-  std::cerr << "error: " << m << '\n';
+  std::cerr << l << ": " << m << std::endl;
 }
 
 // Return the next token.
