@@ -22,6 +22,8 @@ bool Parser::parse(Lexer & lex)
     return result == 0;
 }
 
+static std::string file_name= "test.c";
+
 yy::parser::symbol_type Parser::get_next_token()
 {
     assert(lexer != nullptr);
@@ -31,8 +33,8 @@ yy::parser::symbol_type Parser::get_next_token()
 
     std::cout << "[" << tok->text << "]" << std::flush;
 
-    yy::position const start(nullptr, tok->start.line, tok->start.column);
-    yy::position const end(nullptr, tok->end.line, tok->end.column);
+    yy::position const start(&file_name, tok->start.line, tok->start.column);
+    yy::position const end(&file_name, tok->end.line, tok->end.column);
 
     yy::location const loc(start, end);
 
@@ -145,6 +147,8 @@ yy::parser::symbol_type Parser::get_next_token()
     case ":"_tok:
     case ">"_tok:
     case "<"_tok:
+    case "."_tok:
+    case "~"_tok:
         return yy::parser::symbol_type(tok->type, loc);
 
     case "++"_tok: return yy::parser::make_INC_OP(loc);
@@ -155,6 +159,9 @@ yy::parser::symbol_type Parser::get_next_token()
     case "!="_tok: return yy::parser::make_NE_OP(loc);
     case ">="_tok: return yy::parser::make_GE_OP(loc);
     case "<="_tok: return yy::parser::make_LE_OP(loc);
+
+    case "&&"_tok: return yy::parser::make_AND_OP(loc);
+    case "||"_tok: return yy::parser::make_OR_OP(loc);
 
     case "+="_tok: return yy::parser::make_ADD_ASSIGN(loc);
     case "-="_tok: return yy::parser::make_SUB_ASSIGN(loc);

@@ -33,24 +33,6 @@ struct Parser;
 #include "parser.hpp"
 }
 
-%code
-{
-  // Print a list of strings.
-  auto
-  operator<< (std::ostream& o, const std::vector<std::string>& ss)
-    -> std::ostream&
-  {
-    o << '{';
-    const char *sep = "";
-    for (const auto& s: ss)
-      {
-        o << sep << s;
-        sep = ", ";
-      }
-    return o << '}';
-  }
-}
-
 %define api.token.prefix {TOK_}
 
 // %printer { yyo << $$; } <*>;
@@ -101,11 +83,49 @@ primitive_type
     | VOID
 ;
 
+struct_or_union
+    : STRUCT
+    | UNION
+;
+
+struct_declaration_list
+    : variable_declaration
+    | variable_declaration  struct_declaration_list
+;
+
+struct_or_union_specifier
+    : struct_or_union '{' struct_declaration_list '}'
+    | struct_or_union IDENTIFIER '{' struct_declaration_list '}'
+    | struct_or_union IDENTIFIER
+;
+
 type
     : primitive_type
     | type '*'
     | type CONST
+    | struct_or_union_specifier
     | IDENTIFIER
+;
+
+enum_member
+    : IDENTIFIER
+    | IDENTIFIER '=' constexpr
+;
+
+enum_members
+    : enum_member
+    | enum_member ',' enum_members
+;
+
+enum_specifier
+    : ENUM IDENTIFIER '{' enum_members '}';
+    | ENUM IDENTIFIER '{' enum_members ',' '}';
+;
+
+type_declaration
+    : struct_or_union_specifier ';'
+    | TYPEDEF type IDENTIFIER ';'
+    | enum_specifier ';'
 ;
 
 literal
@@ -117,10 +137,12 @@ literal
     ;
 
 primary_expression
-	: IDENTIFIER
-	| literal
-	| '(' expr ')'
-	;
+    : IDENTIFIER
+    | literal
+    | '(' expr ')'
+    | '(' IDENTIFIER ')'
+    | '(' literal ')'
+    ;
 
 
 postfix_expression
@@ -297,24 +319,52 @@ scalar_or_array_name
     | IDENTIFIER
 ;
 
-variable_declaration
-    : linkage_modifiers type scalar_or_array_name ';'
-    | type scalar_or_array_name ';'
-    | linkage_modifiers type scalar_or_array_name '=' expr ';'
-    | type scalar_or_array_name '=' expr ';'
+declaration
+    : scalar_or_array_name '=' expr
+    | scalar_or_array_name '=' '{' initializer_list '}'
+    | scalar_or_array_name '=' '{' initializer_list ',' '}'
+    | scalar_or_array_name
 ;
 
-statement
+declaration_list
+    : declaration
+    | declaration ',' declaration_list
+;
+
+variable_declaration
+    : linkage_modifiers type declaration_list ';'
+    | type declaration_list ';'
+;
+
+expression_statement
     : ';'
     | expr ';'
+;
+
+labeled_statement
+	: IDENTIFIER ':' statement
+	| CASE constexpr ':' statement
+	| DEFAULT ':' statement
+	;
+
+statement
+    : expression_statement
+    | labeled_statement
     | block
     | variable_declaration
     | WHILE '(' expr ')' statement
     | DO block WHILE '(' expr ')' ';'
-    | IF '(' expr ')' block ELSE block
-    | IF '(' expr ')' block
+    | IF '(' expr ')' statement ELSE statement
+    | IF '(' expr ')' statement
     | BREAK ';'
     | CONTINUE ';'
+    | RETURN ';'
+    | RETURN expr ';'
+    | FOR '(' expression_statement expression_statement ')' statement
+    | FOR '(' expression_statement expression_statement expr ')' statement
+    | FOR '(' declaration expression_statement ')' statement
+    | FOR '(' declaration expression_statement expr ')' statement
+    | SWITCH '(' expr ')' statement
 ;
 
 statement_list
@@ -352,6 +402,7 @@ function_declaration
 declaration
     : variable_declaration
     | function_declaration
+    | type_declaration
 ;
 
 translation_unit
