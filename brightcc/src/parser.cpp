@@ -103,7 +103,7 @@ namespace /* private */
                 return nullptr;
             }
 
-            rpa_dbex_dumpproductions(dbex.get());
+            // rpa_dbex_dumpproductions(dbex.get());
 
             grammar_data.emplace(std::move(dbex));
         }
@@ -128,9 +128,11 @@ bool Parser::parse(std::string const & fileData)
     std::unique_ptr<rarray_t, decltype(&rpa_records_destroy)> records(rpa_records_create(), rpa_records_destroy);
     assert(records);
 
+    auto const start_rule = rpa_dbex_lookup_s(dbex(), "translation_unit");
+
     auto const parse_error = rpa_stat_parse(
         stat,
-        rpa_dbex_last(dbex()),
+        start_rule,
         RPA_ENCODING_UTF8,
         fileData.c_str(),
         fileData.c_str(),

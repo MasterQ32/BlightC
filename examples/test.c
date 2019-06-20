@@ -1,1 +1,3 @@
-Achim E. Queissner
+
+
+const int const volatile * volatile * restrict foo;
