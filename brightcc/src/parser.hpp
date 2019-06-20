@@ -1,18 +1,17 @@
 #ifndef PARSER_HPP
 #define PARSER_HPP
 
-#include "lexer.hpp"
-#include "bison-parser.tab.hh"
-
 #include <string>
 #include <map>
 #include <queue>
 
+#include <rpa/rpa.h>
+#include <rpa/rpastat.h>
+
 struct Parser
 {
 private:
-    yy::parser bison;
-    Lexer * lexer;
+    rpastat_t * stat;
 
 public:
     explicit Parser();
@@ -20,12 +19,7 @@ public:
     ~Parser();
 
 
-    bool parse(Lexer & lex);
-
-    yy::parser::symbol_type get_next_token();
-
-    int result;
-    std::map<std::string, int> variables;
+    bool parse(std::string const & fileData);
 };
 
 #endif // PARSER_HPP

@@ -1,0 +1,8 @@
+#!emitid name 1
+#!emitid first 2
+#!emitid last 3
+
+first  ::= [A-Za-z]+
+middle ::= [A-Za-z]+ '.'?
+last   ::= [A-Za-z]+
+name   ::= <first> ' ' <middle> ' ' <last>

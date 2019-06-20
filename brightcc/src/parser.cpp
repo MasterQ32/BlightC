@@ -1,180 +1,165 @@
 #include "parser.hpp"
+#include "io.hpp"
 
 #include <cassert>
+#include <memory>
+#include <iostream>
+#include <rpa/rpadbex.h>
+
+namespace /* private */
+{
+    using dbex_ptr = std::unique_ptr<rpadbex_t, decltype(&rpa_dbex_destroy)>;
+
+    std::optional<dbex_ptr> grammar_data;
+
+    static char const * code_to_string(long code)
+    {
+        switch(code) {
+            case RPA_E_NONE: return "No error";
+            case RPA_E_OUTOFMEM: return "Not enough memory";
+            case RPA_E_NOTCOMPILED: return "The database is not yet compiled to byte code. Some of the operations are not possible until the call to @ref rpa_dbex_compile is made.";
+            case RPA_E_NOTOPEN: return "The database is not open. Use @ref rpa_dbex_open to open it.";
+            case RPA_E_NOTCLOSED: return "The database is not closed. Use @ref rpa_dbex_close to close it.";
+            case RPA_E_NOTFOUND: return "The specified rule cannot be found";
+            case RPA_E_SYNTAXERROR: return "Syntax Error. Check the BNF syntax.";
+            case RPA_E_UNRESOLVEDSYMBOL: return "A rule name is used in the BNF specification, but it is not defined";
+            case RPA_E_PARAM: return "Invalid parameter";
+            case RPA_E_COMPILE: return "Compile error";
+
+            case RPA_E_EXECUTION: return "Execution error";
+            case RPA_E_USERABORT: return "Operation is interrupted by user";
+            case RPA_E_RULEABORT: return "If a rule is set to abort with the directive #!abort, if it cannot be matched the engine will generate this error";
+            case RPA_E_INVALIDINPUT: return "Invalid input was specified";
+        }
+        return nullptr;
+    }
+
+    static void print_error(rpa_errinfo_t const & err)
+    {
+        std::cerr << "error:";
+
+        if(err.mask & RPA_ERRINFO_CODE) {
+            std::cerr << " code=";
+            if(auto str = code_to_string(err.code); str != nullptr)
+                std::cerr << "'" << str << "'" ;
+            else
+                std::cerr << err.code;
+        }
+        if(err.mask & RPA_ERRINFO_OFFSET)
+            std::cerr << " offset=" << err.offset;
+        if(err.mask & RPA_ERRINFO_LINE)
+            std::cerr << " line=" << err.line;
+        if(err.mask & RPA_ERRINFO_RULEUID)
+            std::cerr << " ruleid=" << err.ruleuid;
+        if(err.mask & RPA_ERRINFO_NAME)
+            std::cerr << " name=" << err.name;
+        std::cerr << std::endl;
+    }
+
+    static void print_dbex_error(rpadbex_t * dbex)
+    {
+        rpa_errinfo_t err;
+        if(rpa_dbex_lasterrorinfo(dbex, &err) < 0) {
+            std::cerr << "error: failed to get error info!" << std::endl;
+            return;
+        }
+        print_error(err);
+    }
+
+    static void print_stat_error(rpastat_t * stat)
+    {
+        rpa_errinfo_t err;
+        if(rpa_stat_lasterrorinfo(stat, &err) < 0) {
+            std::cerr << "error: failed to get error info!" << std::endl;
+            return;
+        }
+        print_error(err);
+    }
+
+    rpadbex_t * dbex()
+    {
+        if(not grammar_data)
+        {
+            auto const data = IO::load_file("/home/felix/projects/bright-c/brightcc/src/bright-c.bnf");
+            assert(data);
+
+            dbex_ptr dbex(rpa_dbex_create(), rpa_dbex_destroy);
+            assert(dbex != nullptr);
+
+            if(rpa_dbex_open(dbex.get()) < 0) {
+                print_dbex_error(dbex.get());
+                return nullptr;
+            }
+
+            if(rpa_dbex_load(dbex.get(), data->data(), data->size()) < 0) {
+                print_dbex_error(dbex.get());
+                return nullptr;
+            }
+
+            rpa_dbex_close(dbex.get());
+
+            if(rpa_dbex_compile(dbex.get()) < 0) {
+                print_dbex_error(dbex.get());
+                return nullptr;
+            }
+
+            rpa_dbex_dumpproductions(dbex.get());
+
+            grammar_data.emplace(std::move(dbex));
+        }
+        assert(grammar_data);
+        return grammar_data->get();
+    }
+}
 
 Parser::Parser() :
-    bison(*this)
+    stat(rpa_stat_create(dbex(), RPA_DEFAULT_STACKSIZE))
 {
-
+    assert(stat != nullptr);
 }
 
 Parser::~Parser()
 {
-
+    rpa_stat_destroy(stat);
 }
 
-bool Parser::parse(Lexer & lex)
+bool Parser::parse(std::string const & fileData)
 {
-    lexer = &lex;
-    auto const result = bison.parse();
-    lexer = nullptr;
+    std::unique_ptr<rarray_t, decltype(&rpa_records_destroy)> records(rpa_records_create(), rpa_records_destroy);
+    assert(records);
 
-    return result == 0;
-}
-
-static std::string file_name= "test.c";
-
-yy::parser::symbol_type Parser::get_next_token()
-{
-    assert(lexer != nullptr);
-    auto const tok = lexer->lex();
-    if(not tok)
-        return yy::parser::symbol_type { 0, yy::location { } };
-
-    std::cout << "[" << tok->text << "]" << std::flush;
-
-    yy::position const start(&file_name, tok->start.line, tok->start.column);
-    yy::position const end(&file_name, tok->end.line, tok->end.column);
-
-    yy::location const loc(start, end);
-
-    switch(tok->type)
-    {
-    case Token::IntLiteral:
-        return yy::parser::make_INT_CONSTANT(loc);
-    case Token::DoubleLiteral:
-        return yy::parser::make_REAL_CONSTANT(loc);
-    case Token::StringLiteral:
-        return yy::parser::make_STRING_LITERAL(loc);
-
-    case Token::Identifier:
-        // %token AUTO REGISTER RESTRICT
-        // %token ELLIPSIS
-
-        if(tok->text == "extern")
-            return yy::parser::make_EXTERN(loc);
-        else if(tok->text == "export")
-            return yy::parser::make_EXPORT(loc);
-        else if(tok->text == "static")
-            return yy::parser::make_STATIC(loc);
-        else if(tok->text == "while")
-            return yy::parser::make_WHILE(loc);
-        else if(tok->text == "if")
-            return yy::parser::make_IF(loc);
-        else if(tok->text == "for")
-            return yy::parser::make_FOR(loc);
-        else if(tok->text == "else")
-            return yy::parser::make_ELSE(loc);
-        else if(tok->text == "do")
-            return yy::parser::make_DO(loc);
-        else if(tok->text == "switch")
-            return yy::parser::make_SWITCH(loc);
-        else if(tok->text == "bool")
-            return yy::parser::make_BOOL(loc);
-        else if(tok->text == "char")
-            return yy::parser::make_CHAR(loc);
-        else if(tok->text == "short")
-            return yy::parser::make_SHORT(loc);
-        else if(tok->text == "int")
-            return yy::parser::make_INT(loc);
-        else if(tok->text == "long")
-            return yy::parser::make_LONG(loc);
-        else if(tok->text == "unsigned")
-            return yy::parser::make_UNSIGNED(loc);
-        else if(tok->text == "signed")
-            return yy::parser::make_SIGNED(loc);
-        else if(tok->text == "float")
-            return yy::parser::make_FLOAT(loc);
-        else if(tok->text == "double")
-            return yy::parser::make_DOUBLE(loc);
-        else if(tok->text == "const")
-            return yy::parser::make_CONST(loc);
-        else if(tok->text == "volatile")
-            return yy::parser::make_VOLATILE(loc);
-        else if(tok->text == "void")
-            return yy::parser::make_VOID(loc);
-        else if(tok->text == "inline")
-            return yy::parser::make_INLINE(loc);
-        else if(tok->text == "typedef")
-            return yy::parser::make_TYPEDEF(loc);
-        else if(tok->text == "inline")
-            return yy::parser::make_INLINE(loc);
-        else if(tok->text == "struct")
-            return yy::parser::make_STRUCT(loc);
-        else if(tok->text == "union")
-            return yy::parser::make_UNION(loc);
-        else if(tok->text == "enum")
-            return yy::parser::make_ENUM(loc);
-        else if(tok->text == "case")
-            return yy::parser::make_CASE(loc);
-        else if(tok->text == "default")
-            return yy::parser::make_DEFAULT(loc);
-        else if(tok->text == "goto")
-            return yy::parser::make_GOTO(loc);
-        else if(tok->text == "continue")
-            return yy::parser::make_CONTINUE(loc);
-        else if(tok->text == "break")
-            return yy::parser::make_BREAK(loc);
-        else if(tok->text == "return")
-            return yy::parser::make_RETURN(loc);
-        else if(tok->text == "async")
-            return yy::parser::make_ASYNC(loc);
-        else if(tok->text == "await")
-            return yy::parser::make_AWAIT(loc);
-
-        return yy::parser::make_IDENTIFIER(loc);
-
-
-    case "("_tok:
-    case ")"_tok:
-    case "["_tok:
-    case "]"_tok:
-    case "{"_tok:
-    case "}"_tok:
-    case "*"_tok:
-    case "+"_tok:
-    case "-"_tok:
-    case "/"_tok:
-    case "%"_tok:
-    case "&"_tok:
-    case "|"_tok:
-    case "^"_tok:
-    case ";"_tok:
-    case "="_tok:
-    case "!"_tok:
-    case ","_tok:
-    case "?"_tok:
-    case ":"_tok:
-    case ">"_tok:
-    case "<"_tok:
-    case "."_tok:
-    case "~"_tok:
-        return yy::parser::symbol_type(tok->type, loc);
-
-    case "++"_tok: return yy::parser::make_INC_OP(loc);
-    case "--"_tok: return yy::parser::make_DEC_OP(loc);
-
-    case "->"_tok: return yy::parser::make_PTR_OP(loc);
-    case "=="_tok: return yy::parser::make_EQ_OP(loc);
-    case "!="_tok: return yy::parser::make_NE_OP(loc);
-    case ">="_tok: return yy::parser::make_GE_OP(loc);
-    case "<="_tok: return yy::parser::make_LE_OP(loc);
-
-    case "&&"_tok: return yy::parser::make_AND_OP(loc);
-    case "||"_tok: return yy::parser::make_OR_OP(loc);
-
-    case "+="_tok: return yy::parser::make_ADD_ASSIGN(loc);
-    case "-="_tok: return yy::parser::make_SUB_ASSIGN(loc);
-    case "*="_tok: return yy::parser::make_MUL_ASSIGN(loc);
-    case "/="_tok: return yy::parser::make_DIV_ASSIGN(loc);
-    case "%="_tok: return yy::parser::make_MOD_ASSIGN(loc);
-    case "|="_tok: return yy::parser::make_OR_ASSIGN(loc);
-    case "&="_tok: return yy::parser::make_AND_ASSIGN(loc);
-    case "^="_tok: return yy::parser::make_XOR_ASSIGN(loc);
-    case "<<="_tok: return yy::parser::make_LEFT_ASSIGN(loc);
-    case ">>="_tok: return yy::parser::make_RIGHT_ASSIGN(loc);
-
-    default:
-        assert(false and "unhandled token type!");
+    auto const parse_error = rpa_stat_parse(
+        stat,
+        rpa_dbex_last(dbex()),
+        RPA_ENCODING_UTF8,
+        fileData.c_str(),
+        fileData.c_str(),
+        fileData.c_str() + fileData.size(),
+        records.get()
+    );
+    if(parse_error == 0) {
+        print_stat_error(stat);
+        return false;
     }
+    if(parse_error < 0) {
+        print_stat_error(stat);
+        return false;
+    }
+
+    for (int i = 0; i < rpa_records_length(records.get()); i++) {
+        auto record = rpa_records_slot(records.get(), i);
+        if (record->type == RPA_RECORD_START)
+            fprintf(stdout, "RPA_RECORD_START   (UID: %d)  ", record->ruleuid);
+        if (record->type == RPA_RECORD_END)
+            fprintf(stdout, "RPA_RECORD_END     (UID: %d)  ", record->ruleuid);
+        /*
+         * record->rule points to memory allocated by rpadbex_t,
+         * make sure rpadbex_t object is not destroyed while accessing this pointer.
+         */
+        fprintf(stdout, "%s: ", record->rule);
+        fwrite(record->input, 1, record->inputsiz, stdout);
+        fprintf(stdout, "\n");
+    }
+
+    return true;
 }

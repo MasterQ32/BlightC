@@ -2,4 +2,6 @@ TEMPLATE = aux
 CONFIG -= qt
 
 DISTFILES += \
-  test.c
+  test.c \
+  huge-test.c
+

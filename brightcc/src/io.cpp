@@ -11,6 +11,9 @@ std::optional<IO::buffer> IO::load_file(std::filesystem::path const & path)
     auto const size = std::filesystem::file_size(path, error);
     if(error)
         return std::nullopt;
+    if(size == 0)
+        return buffer { };
+
     buffer buf(size);
 
     FILE * f = fopen(path.c_str(), "rb");
