@@ -29,8 +29,7 @@ HEADERS += \
   src/c_lexer.h \
   src/codegen.hpp \
   src/io.hpp \
-  src/parser.hpp \
-  src/stack.hh
+  src/parser.hpp
 
 DISTFILES += \
   src/bison-parser.yy \

@@ -20,6 +20,12 @@ export function main(int argc,c2har ** argv);
 export async function main();
 export async function main(int argc,char ** argv);
 
+void test_for()
+{
+    for(i; i; i)
+        ;
+}
+
 enum EnemyType
 {
     A = 1,
@@ -158,10 +164,10 @@ void maploader_load(char const * fileName)
 	maploader.cells = sys_malloc(sizeof(maploader_cell) * maploader.w * maploader.h);
 
 	int x, y;
-	for(x = 0; x < maploader.w; x++)
+	for(x = 0; x < maploader.x; x++)
 	{
-		for(y = 0; y < maploader.h; y++)
-		{
+        for(y = 0; y < maploader.h; y++)
+        {
 			var pixel = pixel_for_bmap(bmp, x, y);
 
 			COLOR col;
@@ -209,7 +215,7 @@ void maploader_load(char const * fileName)
 
     int meshcnt = ent_status(maploader.terrain, 16);
 
-    int iMesh;
+     int iMesh;
     for(iMesh = 0; iMesh < meshcnt; iMesh++)
     {
         LPD3DXMESH mesh = ent_getmesh(maploader.terrain, iMesh, 0);
@@ -316,15 +322,15 @@ void maploader_load(char const * fileName)
     }
     maploader.terrain.clipfactor = 2;
 
-//    int i; for(i = -15; i <= 15; i++)
-//    {
-//        you = ent_create(
-//            "StrasseGerade.mdl",
-//            vector(580 * i, 0, 0),
-//            NULL
-//        );
-//        you.z = maploader_get_height(you.x);
-//    }
+    int i; for(i = -15; i <= 15; i++)
+    {
+        you = ent_create(
+            "StrasseGerade.mdl",
+            vector(580 * i, 0, 0),
+            NULL
+        );
+        you.z = maploader_get_height(you.x);
+    }
 
     collision_mode = 1;
 
@@ -511,7 +517,7 @@ int grid_idx2Y(int idx)
 
 void grid_errorcheck(int id)
 {
-	if(id < 0 || id > grid_xSize*grid_ySize)
+	if(id < 0 || id > grid_xSize * grid_ySize)
 		error("ID out of bounds beim Zugriff auf die Grid");
 }
 
