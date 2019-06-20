@@ -1,7 +1,6 @@
 %skeleton "lalr1.cc" /* -*- C++ -*- */
 %language "c++"
 %require "3.2"
-/* %require "3.3.2" */
 %defines
 %define api.token.constructor
 %define api.value.type variant
@@ -26,6 +25,7 @@ struct Parser;
 
 %locations
 
+// %verbose
 %define parse.trace
 %define parse.error verbose
 
@@ -36,6 +36,7 @@ struct Parser;
 %define api.token.prefix {TOK_}
 
 // %printer { yyo << $$; } <*>;
+
 %token IDENTIFIER INT_CONSTANT REAL_CONSTANT STRING_LITERAL SIZEOF
 %token PTR_OP INC_OP DEC_OP LEFT_OP RIGHT_OP LE_OP GE_OP EQ_OP NE_OP
 %token AND_OP OR_OP MUL_ASSIGN DIV_ASSIGN MOD_ASSIGN ADD_ASSIGN
@@ -207,6 +208,7 @@ unary_operator
 	| '-'
 	| '~'
 	| '!'
+    | AWAIT
 	;
 
 cast_expression

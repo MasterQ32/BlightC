@@ -33,4 +33,5 @@ HEADERS += \
   src/position.hh \
   src/stack.hh
 
-DISTFILES +=
+DISTFILES += \
+  src/bison-parser.output

@@ -44,7 +44,7 @@
 #ifndef YY_YY_BISON_PARSER_TAB_HH_INCLUDED
 # define YY_YY_BISON_PARSER_TAB_HH_INCLUDED
 // //                    "%code requires" blocks.
-#line 9 "/home/felix/projects/bright-c/brightcc/src/bison-parser.yy" // lalr1.cc:401
+#line 8 "/home/felix/projects/bright-c/brightcc/src/bison-parser.yy" // lalr1.cc:401
 
 #include <string>
 #include <vector>
@@ -2010,7 +2010,7 @@ switch (yytype)
     enum
     {
       yyeof_ = 0,
-      yylast_ = 1450,     ///< Last index in yytable_.
+      yylast_ = 1473,     ///< Last index in yytable_.
       yynnts_ = 55,  ///< Number of nonterminal symbols.
       yyfinal_ = 59, ///< Termination state number.
       yyterror_ = 1,

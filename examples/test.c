@@ -1,6 +1,13 @@
 #include <acknex.h>
 #include <default.c>
 
+void fun()
+{
+    x = (a * b);
+}
+
+/*
+
 int a;
 extern int b;
 static int c;
@@ -161,17 +168,6 @@ void maploader_load(char const * fileName)
 			COLOR col;
 			var alpha;
 			pixel_to_vec(&col, &alpha, format, pixel);
-
-            /*
-            int type = maploader_grey_to_type(col.red);
-
-            if(x < 3 || y < 3 || x >= maploader.w-3 || y >= maploader.h -3) {
-                col.red = 0xC0;
-                type = MAPLOADER_TILE_HOLE;
-                pixel = pixel_for_vec(&col, alpha, format);
-                pixel_to_bmap(bmp, x, y, pixel);
-            }
-            */
 
             int type;
             if(col.blue >= 250)
@@ -500,8 +496,6 @@ void grid_close()
 	grid_state = NULL;
 }
 
-/******************/
-
 int grid_CoordToID(int x, int y)
 {
 	return x + y*grid_xSize;
@@ -522,7 +516,6 @@ void grid_errorcheck(int id)
 		error("ID out of bounds beim Zugriff auf die Grid");
 }
 
-/******************/
 
 void grid_setState(int x, int y, int state)
 {
@@ -559,7 +552,6 @@ int grid_getState_byID(int id)
 	return grid_state[id];
 }
 
-/******************/
 
 int grid_getCellID_byPos(VECTOR pos)
 {
@@ -1100,7 +1092,6 @@ void SPUTNIK__die(ENTITY* ptr)
 {
 	ptr->SPUTNIK_ANIMSTATE += 5 * time_step;
 	ent_animate(ptr, SPUTNIK_DIEANIM, ptr->SPUTNIK_ANIMSTATE, 0);
-	/* transitions */
 	if(ptr->SPUTNIK_ANIMSTATE >= 90)
 	{
 		ptr->ENTITY_STATE = ENTITY_STATE_DEAD;
@@ -1862,19 +1853,12 @@ void ui_game_after_all()
 }
 
 var unit__dmgtable[UNIT_TABLESIZE] = {
-   /*S L E C Z*/
-/*S*/7,9,2,2,1,
-/*L*/2,5,7,7,1,
-/*E*/9,5,3,3,1,
-/*C*/2,5,7,7,1,
-/*Z*/0,0,0,0,0
+7,9,2,2,1,
+2,5,7,7,1,
+9,5,3,3,1,
+2,5,7,7,1,
+0,0,0,0,0
 };
-/*
-(CBABE)Maschinengewehrinfanterie: ++Infanterie  00Fahrzeug  --Panzer
-(EYE)Raketeninfanterie:           --Infanterie  00Fahrzeug  ++Panzer
-(LERCHE)Fahrzeug:                 ++Infanterie  00Fahrzeug  --Panzer
-(SPUTNIK)Panzer:                  --Infanterie  ++Fahrzeug  ++Panzer
-*/
 
 var unit_setTarget(ENTITY* ent, VECTOR* pos)
 {
@@ -2027,12 +2011,6 @@ ENTITY* unit_findNextVictim(ENTITY* ptr, var unittype)
 
 ENTITY* unit_findNextVictim(ENTITY* ptr)
 {
-	/* following requirements have to be met for auto-picking of next victim
-	   1) no victim active
-	   2) unit type of last victim is still valid
-
-	   if unit type of last victim is cleared, no new victim is searched
-	 */
 
 	if (unit_getVictim(ptr) == NULL && ptr->ENTITY_VICTIMTYPE != UNIT_INVALID)
 	{
@@ -2070,3 +2048,5 @@ void unit_deactivate(ENTITY* ptr)
 	jpsUnitDestroy(jpsUnitGetFromEntity(ptr));
 	ptr->group = 0;
 }
+
+//*/
