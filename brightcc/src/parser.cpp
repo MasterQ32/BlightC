@@ -139,14 +139,12 @@ bool Parser::parse(std::string const & fileData)
         fileData.c_str() + fileData.size(),
         records.get()
     );
-    if(parse_error == 0) {
-        print_stat_error(stat);
-        return false;
-    }
     if(parse_error < 0) {
         print_stat_error(stat);
         return false;
     }
+
+    std::cout << parse_error << std::endl;
 
     for (int i = 0; i < rpa_records_length(records.get()); i++) {
         auto record = rpa_records_slot(records.get(), i);
@@ -161,6 +159,29 @@ bool Parser::parse(std::string const & fileData)
         fprintf(stdout, "%s: ", record->rule);
         fwrite(record->input, 1, record->inputsiz, stdout);
         fprintf(stdout, "\n");
+    }
+
+    if(parse_error == 0) {
+        print_stat_error(stat);
+        return false;
+    }
+
+    if(parse_error != fileData.size()) {
+
+        int line = 1;
+        int column = 1;
+        for(size_t i = 0; i < parse_error; i++)
+        {
+            if(fileData[i] == '\n') {
+                line++;
+                column = 1;
+            } else {
+                column += 1;
+            }
+        }
+
+        std::cout << "syntax error at position " << line << ":" << column << std::endl;
+        return false;
     }
 
     return true;

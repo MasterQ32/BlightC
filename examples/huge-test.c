@@ -1,11 +1,6 @@
 #include <acknex.h>
 #include <default.c>
 
-void fun()
-{
-    x = (a * b);
-}
-
 /*
 
 int a;

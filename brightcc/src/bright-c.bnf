@@ -5,45 +5,96 @@
 #!emit float_literal
 #!emit string_literal
 #!emit unary_expression
-#!emit cast_expression
+#!emit cast
 #!emit multiplicative_expression
 #!emit additive_expression
 #!emit type
 
-
-_ ::= ([#x20] | [#x0A] | [#x0D] | [#xB])+
+_ ::= ([#x20] | [#x0A] | [#x0D] | [#xB] | [#x9] | '/*' (. - '*/')* '*/' | '//' (. - ([#0x0A] | [#0x0D]))*)+
 
 id             ::= [A-Za-z_][A-Za-z0-9_]*
 
 int_literal    ::= [0-9]+ | '0' [0-7]+ | '0x' [0-9a-fA-F]+
 float_literal  ::= [0-9]* '.' [0-9]+ | [0-9]+ '.' [0-9]*
-string_literal ::= '"' ([^"] | '\' . )+ '"'
+string_literal ::= '"' ((. - '"') | '\"')* '"'
 
 literal  ::= <float_literal> | <int_literal> | <string_literal>
 
 primary_expression ::= <id> | <literal> | '(' <_>? <expression> <_>? ')'
 
+expression_list ::= <expression> (<_>? ',' <_>? <expression>)*
 
-unary_expression ::= ( '+' | '-' | '&' | '~' | '!' ) <_>? <primary_expression> | <primary_expression>
+fncall_expr ::= <primary_expression> <_>? '(' <_>? <expression_list>? <_>? ')'
+index_expr  ::= <primary_expression> <_>? '[' <_>? <expression_list>? <_>? ']'
+subscript_expr ::= <primary_expression> <_>? ('.' | '->') <_>? <id>
 
-cast_expression ::= '(' <_>? <type> <_>? ')' <_>? <unary_expression> | <unary_expression>
+postfix_expression ::= <fncall_expr> | <index_expr> | <subscript_expr> | <primary_expression>
+
+unary_expression ::= ( '+' | '-' | '&' | '~' | '!' | '*' ) <_>? <postfix_expression> | <postfix_expression>
+
+cast ::= '(' <_>? <type> <_>? ')' <_>? <unary_expression>
+cast_expression ::= <cast> | <unary_expression>
+
+multiplicative_operator ::= '*' | '/' | '%'
+multiplicative_expression ::= <multiplicative_expression> <_>? <multiplicative_operator> <_>? <cast_expression> | <cast_expression>
+
+additive_operator ::= '+' | '-'
+additive_expression       ::= <additive_expression> <_>? <additive_operator> <_>? <multiplicative_expression> | <multiplicative_expression>
 
 
-multiplicative_expression ::= <cast_expression> <_>? ('*' | '/' | '%') <_>? <cast_expression> | <cast_expression>
 
-additive_expression       ::= <multiplicative_expression> <_>? ('+' | '-') <_>? <multiplicative_expression> | <multiplicative_expression>
+# CONTINUE HERE
+conditional_expression ::= <additive_expression>
 
-expression  ::= <additive_expression>
+assignment_expression ::= <unary_expression> <_>? <assignment_operator> <_>? <assignment_expression> | <conditional_expression>
 
-storage_specifier ::= 'export' | 'static' | 'extern'
+assignment_operator ::= '+=' | '-=' | '*=' | '/=' | '%=' | '<<=' | '>>=' | '&=' | '|=' | '^=' | '='
+
+const_expression ::= <conditional_expression>
+
+expression  ::= (<assignment_expression> <_>? ',' <_>?)* <assignment_expression>
+
+storage_specifier ::= 'export' | 'static' | 'extern' | 'async'
 
 type_qualifier ::= 'volatile' | 'const' | 'restrict' | 'atomic'
 
 pointer_type ::= <type> <_>? '*'
 
-type ::= (<pointer_type> | <id>) (<_> <type_qualifier>)*
+struct_member_decl ::= <type> <_>? <id> ( <_>? ',' <_>? <id>)* <_>? ';'
 
-declaration ::= <_>? (<storage_specifier> <_>)* <type> <_> <id> (<_>? '=' <_>? <expression>)? <_>? ';'
+struct_type ::= 'struct' <_>? <id>? (<_>? '{' <_>? (<struct_member_decl> <_>?)* '}')?
+
+type ::= <struct_type> | (<pointer_type> | <id>) (<_> <type_qualifier>)*
+
+while_statement ::= 'while' <_>? '(' <expression> ')' <_>? <statement>
+if_statement    ::= 'if' <_>? '(' <expression> ')' <_>? <statement> (<_>? 'else' <_>? <statement>)?
+
+statement ::= <expression>? <_>? ';' | <declaration> | <block> | <while_statement>
+
+block ::= '{' <_>? (<statement> <_>?)* '}'
+
+array_size_specifier ::= '[' <_>? <const_expression> <_>? ']'
+
+variable_declaration ::= <_>? (<storage_specifier> <_>)* <type> <_>? <id> <array_size_specifier>? (<_>? '=' <_>? <const_expression>)? <_>? ';'
+
+parameter ::= <type> <_>? <id>
+
+parameter_list ::= <_>? <parameter> <_>? (',' <_>? <parameter>)*
+
+function_declaration ::= <_>? (<storage_specifier> <_>)* <type> <_> <id> <_>? '(' <parameter_list>? ')' <_>? ( ';' | <block> )
+
+enum_item ::= <id> <_>? '=' <_>? <const_expression> | <id>
+
+enum_items ::= <enum_item> ( <_>? ',' <_>? <enum_item> )* <_>? ','?
+
+enum_declaration ::= 'enum' <_> <id> <_>? '{' <_>? <enum_items> <_>? '}' <_>? ';'
+
+struct_declaration ::= <struct_type> ';'
+
+typedef_declaration ::= 'typedef' <_> <type> <_> <id> <_>? ';'
+
+
+declaration ::= <typedef_declaration> | <struct_declaration> | <variable_declaration> | <function_declaration> | <enum_declaration>
 
 
 
