@@ -638,13 +638,13 @@ switch (yytype)
       symbol_type (int tok, location_type l)
         : super_type(token_type (tok), std::move (l))
       {
-        YYASSERT (tok == 0 || tok == token::TOK_IDENTIFIER || tok == token::TOK_INT_CONSTANT || tok == token::TOK_REAL_CONSTANT || tok == token::TOK_STRING_LITERAL || tok == token::TOK_SIZEOF || tok == token::TOK_PTR_OP || tok == token::TOK_INC_OP || tok == token::TOK_DEC_OP || tok == token::TOK_LEFT_OP || tok == token::TOK_RIGHT_OP || tok == token::TOK_LE_OP || tok == token::TOK_GE_OP || tok == token::TOK_EQ_OP || tok == token::TOK_NE_OP || tok == token::TOK_AND_OP || tok == token::TOK_OR_OP || tok == token::TOK_MUL_ASSIGN || tok == token::TOK_DIV_ASSIGN || tok == token::TOK_MOD_ASSIGN || tok == token::TOK_ADD_ASSIGN || tok == token::TOK_SUB_ASSIGN || tok == token::TOK_LEFT_ASSIGN || tok == token::TOK_RIGHT_ASSIGN || tok == token::TOK_AND_ASSIGN || tok == token::TOK_XOR_ASSIGN || tok == token::TOK_OR_ASSIGN || tok == token::TOK_TYPEDEF || tok == token::TOK_EXTERN || tok == token::TOK_STATIC || tok == token::TOK_AUTO || tok == token::TOK_REGISTER || tok == token::TOK_INLINE || tok == token::TOK_RESTRICT || tok == token::TOK_CHAR || tok == token::TOK_SHORT || tok == token::TOK_INT || tok == token::TOK_LONG || tok == token::TOK_SIGNED || tok == token::TOK_UNSIGNED || tok == token::TOK_FLOAT || tok == token::TOK_DOUBLE || tok == token::TOK_CONST || tok == token::TOK_VOLATILE || tok == token::TOK_VOID || tok == token::TOK_BOOL || tok == token::TOK_COMPLEX || tok == token::TOK_IMAGINARY || tok == token::TOK_STRUCT || tok == token::TOK_UNION || tok == token::TOK_ENUM || tok == token::TOK_ELLIPSIS || tok == token::TOK_TRUE || tok == token::TOK_FALSE || tok == token::TOK_CASE || tok == token::TOK_DEFAULT || tok == token::TOK_IF || tok == token::TOK_ELSE || tok == token::TOK_SWITCH || tok == token::TOK_WHILE || tok == token::TOK_DO || tok == token::TOK_FOR || tok == token::TOK_GOTO || tok == token::TOK_CONTINUE || tok == token::TOK_BREAK || tok == token::TOK_RETURN || tok == token::TOK_EXPORT || tok == token::TOK_ASYNC || tok == token::TOK_AWAIT || tok == 42 || tok == 44 || tok == 40 || tok == 41 || tok == 91 || tok == 93 || tok == 59 || tok == 61 || tok == 123 || tok == 125);
+        YYASSERT (tok == 0 || tok == token::TOK_IDENTIFIER || tok == token::TOK_INT_CONSTANT || tok == token::TOK_REAL_CONSTANT || tok == token::TOK_STRING_LITERAL || tok == token::TOK_SIZEOF || tok == token::TOK_PTR_OP || tok == token::TOK_INC_OP || tok == token::TOK_DEC_OP || tok == token::TOK_LEFT_OP || tok == token::TOK_RIGHT_OP || tok == token::TOK_LE_OP || tok == token::TOK_GE_OP || tok == token::TOK_EQ_OP || tok == token::TOK_NE_OP || tok == token::TOK_AND_OP || tok == token::TOK_OR_OP || tok == token::TOK_MUL_ASSIGN || tok == token::TOK_DIV_ASSIGN || tok == token::TOK_MOD_ASSIGN || tok == token::TOK_ADD_ASSIGN || tok == token::TOK_SUB_ASSIGN || tok == token::TOK_LEFT_ASSIGN || tok == token::TOK_RIGHT_ASSIGN || tok == token::TOK_AND_ASSIGN || tok == token::TOK_XOR_ASSIGN || tok == token::TOK_OR_ASSIGN || tok == token::TOK_TYPEDEF || tok == token::TOK_EXTERN || tok == token::TOK_STATIC || tok == token::TOK_AUTO || tok == token::TOK_REGISTER || tok == token::TOK_INLINE || tok == token::TOK_RESTRICT || tok == token::TOK_CHAR || tok == token::TOK_SHORT || tok == token::TOK_INT || tok == token::TOK_LONG || tok == token::TOK_SIGNED || tok == token::TOK_UNSIGNED || tok == token::TOK_FLOAT || tok == token::TOK_DOUBLE || tok == token::TOK_CONST || tok == token::TOK_VOLATILE || tok == token::TOK_VOID || tok == token::TOK_BOOL || tok == token::TOK_COMPLEX || tok == token::TOK_IMAGINARY || tok == token::TOK_STRUCT || tok == token::TOK_UNION || tok == token::TOK_ENUM || tok == token::TOK_ELLIPSIS || tok == token::TOK_TRUE || tok == token::TOK_FALSE || tok == token::TOK_CASE || tok == token::TOK_DEFAULT || tok == token::TOK_IF || tok == token::TOK_ELSE || tok == token::TOK_SWITCH || tok == token::TOK_WHILE || tok == token::TOK_DO || tok == token::TOK_FOR || tok == token::TOK_GOTO || tok == token::TOK_CONTINUE || tok == token::TOK_BREAK || tok == token::TOK_RETURN || tok == token::TOK_EXPORT || tok == token::TOK_ASYNC || tok == token::TOK_AWAIT || tok == 42 || tok == 40 || tok == 41 || tok == 91 || tok == 93 || tok == 46 || tok == 123 || tok == 125 || tok == 44 || tok == 61 || tok == 38 || tok == 43 || tok == 45 || tok == 126 || tok == 33 || tok == 47 || tok == 37 || tok == 60 || tok == 62 || tok == 94 || tok == 124 || tok == 63 || tok == 58 || tok == 59);
       }
 #else
       symbol_type (int tok, const location_type& l)
         : super_type(token_type (tok), l)
       {
-        YYASSERT (tok == 0 || tok == token::TOK_IDENTIFIER || tok == token::TOK_INT_CONSTANT || tok == token::TOK_REAL_CONSTANT || tok == token::TOK_STRING_LITERAL || tok == token::TOK_SIZEOF || tok == token::TOK_PTR_OP || tok == token::TOK_INC_OP || tok == token::TOK_DEC_OP || tok == token::TOK_LEFT_OP || tok == token::TOK_RIGHT_OP || tok == token::TOK_LE_OP || tok == token::TOK_GE_OP || tok == token::TOK_EQ_OP || tok == token::TOK_NE_OP || tok == token::TOK_AND_OP || tok == token::TOK_OR_OP || tok == token::TOK_MUL_ASSIGN || tok == token::TOK_DIV_ASSIGN || tok == token::TOK_MOD_ASSIGN || tok == token::TOK_ADD_ASSIGN || tok == token::TOK_SUB_ASSIGN || tok == token::TOK_LEFT_ASSIGN || tok == token::TOK_RIGHT_ASSIGN || tok == token::TOK_AND_ASSIGN || tok == token::TOK_XOR_ASSIGN || tok == token::TOK_OR_ASSIGN || tok == token::TOK_TYPEDEF || tok == token::TOK_EXTERN || tok == token::TOK_STATIC || tok == token::TOK_AUTO || tok == token::TOK_REGISTER || tok == token::TOK_INLINE || tok == token::TOK_RESTRICT || tok == token::TOK_CHAR || tok == token::TOK_SHORT || tok == token::TOK_INT || tok == token::TOK_LONG || tok == token::TOK_SIGNED || tok == token::TOK_UNSIGNED || tok == token::TOK_FLOAT || tok == token::TOK_DOUBLE || tok == token::TOK_CONST || tok == token::TOK_VOLATILE || tok == token::TOK_VOID || tok == token::TOK_BOOL || tok == token::TOK_COMPLEX || tok == token::TOK_IMAGINARY || tok == token::TOK_STRUCT || tok == token::TOK_UNION || tok == token::TOK_ENUM || tok == token::TOK_ELLIPSIS || tok == token::TOK_TRUE || tok == token::TOK_FALSE || tok == token::TOK_CASE || tok == token::TOK_DEFAULT || tok == token::TOK_IF || tok == token::TOK_ELSE || tok == token::TOK_SWITCH || tok == token::TOK_WHILE || tok == token::TOK_DO || tok == token::TOK_FOR || tok == token::TOK_GOTO || tok == token::TOK_CONTINUE || tok == token::TOK_BREAK || tok == token::TOK_RETURN || tok == token::TOK_EXPORT || tok == token::TOK_ASYNC || tok == token::TOK_AWAIT || tok == 42 || tok == 44 || tok == 40 || tok == 41 || tok == 91 || tok == 93 || tok == 59 || tok == 61 || tok == 123 || tok == 125);
+        YYASSERT (tok == 0 || tok == token::TOK_IDENTIFIER || tok == token::TOK_INT_CONSTANT || tok == token::TOK_REAL_CONSTANT || tok == token::TOK_STRING_LITERAL || tok == token::TOK_SIZEOF || tok == token::TOK_PTR_OP || tok == token::TOK_INC_OP || tok == token::TOK_DEC_OP || tok == token::TOK_LEFT_OP || tok == token::TOK_RIGHT_OP || tok == token::TOK_LE_OP || tok == token::TOK_GE_OP || tok == token::TOK_EQ_OP || tok == token::TOK_NE_OP || tok == token::TOK_AND_OP || tok == token::TOK_OR_OP || tok == token::TOK_MUL_ASSIGN || tok == token::TOK_DIV_ASSIGN || tok == token::TOK_MOD_ASSIGN || tok == token::TOK_ADD_ASSIGN || tok == token::TOK_SUB_ASSIGN || tok == token::TOK_LEFT_ASSIGN || tok == token::TOK_RIGHT_ASSIGN || tok == token::TOK_AND_ASSIGN || tok == token::TOK_XOR_ASSIGN || tok == token::TOK_OR_ASSIGN || tok == token::TOK_TYPEDEF || tok == token::TOK_EXTERN || tok == token::TOK_STATIC || tok == token::TOK_AUTO || tok == token::TOK_REGISTER || tok == token::TOK_INLINE || tok == token::TOK_RESTRICT || tok == token::TOK_CHAR || tok == token::TOK_SHORT || tok == token::TOK_INT || tok == token::TOK_LONG || tok == token::TOK_SIGNED || tok == token::TOK_UNSIGNED || tok == token::TOK_FLOAT || tok == token::TOK_DOUBLE || tok == token::TOK_CONST || tok == token::TOK_VOLATILE || tok == token::TOK_VOID || tok == token::TOK_BOOL || tok == token::TOK_COMPLEX || tok == token::TOK_IMAGINARY || tok == token::TOK_STRUCT || tok == token::TOK_UNION || tok == token::TOK_ENUM || tok == token::TOK_ELLIPSIS || tok == token::TOK_TRUE || tok == token::TOK_FALSE || tok == token::TOK_CASE || tok == token::TOK_DEFAULT || tok == token::TOK_IF || tok == token::TOK_ELSE || tok == token::TOK_SWITCH || tok == token::TOK_WHILE || tok == token::TOK_DO || tok == token::TOK_FOR || tok == token::TOK_GOTO || tok == token::TOK_CONTINUE || tok == token::TOK_BREAK || tok == token::TOK_RETURN || tok == token::TOK_EXPORT || tok == token::TOK_ASYNC || tok == token::TOK_AWAIT || tok == 42 || tok == 40 || tok == 41 || tok == 91 || tok == 93 || tok == 46 || tok == 123 || tok == 125 || tok == 44 || tok == 61 || tok == 38 || tok == 43 || tok == 45 || tok == 126 || tok == 33 || tok == 47 || tok == 37 || tok == 60 || tok == 62 || tok == 94 || tok == 124 || tok == 63 || tok == 58 || tok == 59);
       }
 #endif
     };
@@ -1733,7 +1733,7 @@ switch (yytype)
     /// \param yyvalue   the value to check
     static bool yy_table_value_is_error_ (int yyvalue);
 
-    static const signed char yypact_ninf_;
+    static const short yypact_ninf_;
     static const signed char yytable_ninf_;
 
     /// Convert a scanner token number \a t to a symbol number.
@@ -1753,14 +1753,14 @@ switch (yytype)
   static const short yypgoto_[];
 
   // YYDEFGOTO[NTERM-NUM].
-  static const signed char yydefgoto_[];
+  static const short yydefgoto_[];
 
   // YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
   // positive, shift that token.  If negative, reduce the rule whose
   // number is the opposite.  If YYTABLE_NINF, syntax error.
-  static const signed char yytable_[];
+  static const short yytable_[];
 
-  static const signed char yycheck_[];
+  static const short yycheck_[];
 
   // YYSTOS[STATE-NUM] -- The (internal number of the) accessing
   // symbol of state STATE-NUM.
@@ -1781,7 +1781,7 @@ switch (yytype)
     static const char* const yytname_[];
 #if YYDEBUG
   // YYRLINE[YYN] -- Source line where rule number YYN was defined.
-  static const unsigned char yyrline_[];
+  static const unsigned short yyrline_[];
     /// Report on the debug stream that the rule \a r is going to be reduced.
     virtual void yy_reduce_print_ (int r);
     /// Print the state stack on the debug stream.
@@ -2010,12 +2010,12 @@ switch (yytype)
     enum
     {
       yyeof_ = 0,
-      yylast_ = 260,     ///< Last index in yytable_.
-      yynnts_ = 22,  ///< Number of nonterminal symbols.
+      yylast_ = 792,     ///< Last index in yytable_.
+      yynnts_ = 45,  ///< Number of nonterminal symbols.
       yyfinal_ = 37, ///< Termination state number.
       yyterror_ = 1,
       yyerrcode_ = 256,
-      yyntokens_ = 81  ///< Number of tokens.
+      yyntokens_ = 95  ///< Number of tokens.
     };
 
 
@@ -2036,16 +2036,16 @@ switch (yytype)
        0,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-      73,    74,    71,     2,    72,     2,     2,     2,     2,     2,
-       2,     2,     2,     2,     2,     2,     2,     2,     2,    77,
-       2,    78,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,    75,     2,    76,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,    85,     2,     2,     2,    87,    81,     2,
+      72,    73,    71,    82,    79,    83,    76,    86,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,    93,    94,
+      88,    80,    89,    92,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,    79,     2,    80,     2,     2,     2,     2,
+       2,    74,     2,    75,    90,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,    77,    91,    78,    84,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
@@ -2196,15 +2196,16 @@ switch (yytype)
      295,   296,   297,   298,   299,   300,   301,   302,   303,   304,
      305,   306,   307,   308,   309,   310,   311,   312,   313,   314,
      315,   316,   317,   318,   319,   320,   321,   322,   323,   324,
-     325,    42,    44,    40,    41,    91,    93,    59,    61,   123,
-     125
+     325,    42,    40,    41,    91,    93,    46,   123,   125,    44,
+      61,    38,    43,    45,   126,    33,    47,    37,    60,    62,
+      94,   124,    63,    58,    59
     };
     return token_type (yytoken_number_[type]);
   }
 
 
 } // yy
-#line 2208 "bison-parser.tab.hh" // lalr1.cc:401
+#line 2209 "bison-parser.tab.hh" // lalr1.cc:401
 
 
 

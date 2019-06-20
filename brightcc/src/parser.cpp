@@ -141,18 +141,31 @@ yy::parser::symbol_type Parser::get_next_token()
     case "="_tok:
     case "!"_tok:
     case ","_tok:
+    case "?"_tok:
+    case ":"_tok:
+    case ">"_tok:
+    case "<"_tok:
         return yy::parser::symbol_type(tok->type, loc);
 
-    case "->"_tok:
-        return yy::parser::make_PTR_OP(loc);
-    case "=="_tok:
-        return yy::parser::make_EQ_OP(loc);
-    case "!="_tok:
-        return yy::parser::make_NE_OP(loc);
-    case ">="_tok:
-        return yy::parser::make_GE_OP(loc);
-    case "<="_tok:
-        return yy::parser::make_LE_OP(loc);
+    case "++"_tok: return yy::parser::make_INC_OP(loc);
+    case "--"_tok: return yy::parser::make_DEC_OP(loc);
+
+    case "->"_tok: return yy::parser::make_PTR_OP(loc);
+    case "=="_tok: return yy::parser::make_EQ_OP(loc);
+    case "!="_tok: return yy::parser::make_NE_OP(loc);
+    case ">="_tok: return yy::parser::make_GE_OP(loc);
+    case "<="_tok: return yy::parser::make_LE_OP(loc);
+
+    case "+="_tok: return yy::parser::make_ADD_ASSIGN(loc);
+    case "-="_tok: return yy::parser::make_SUB_ASSIGN(loc);
+    case "*="_tok: return yy::parser::make_MUL_ASSIGN(loc);
+    case "/="_tok: return yy::parser::make_DIV_ASSIGN(loc);
+    case "%="_tok: return yy::parser::make_MOD_ASSIGN(loc);
+    case "|="_tok: return yy::parser::make_OR_ASSIGN(loc);
+    case "&="_tok: return yy::parser::make_AND_ASSIGN(loc);
+    case "^="_tok: return yy::parser::make_XOR_ASSIGN(loc);
+    case "<<="_tok: return yy::parser::make_LEFT_ASSIGN(loc);
+    case ">>="_tok: return yy::parser::make_RIGHT_ASSIGN(loc);
 
     default:
         assert(false and "unhandled token type!");
