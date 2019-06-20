@@ -143,6 +143,7 @@ Modules can ring-reference each other without further work.
 - introduction of unsigned types
 - well-defined cast between `var` and a pointer
 - remove C namespaces: no `enum foo` for an enum named `foo`. less typedefs are better
+- scoped enums as in C++11 (no default C enums, as lite-c didn't have those anyways)
 
 ## Planned / Future Features
 

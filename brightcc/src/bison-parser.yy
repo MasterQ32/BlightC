@@ -160,6 +160,11 @@ statement
     | block
     | variable_declaration
     | WHILE '(' expr ')' statement
+    | DO block WHILE '(' expr ')' ';'
+    | IF '(' expr ')' block ELSE block
+    | IF '(' expr ')' block
+    | BREAK ';'
+    | CONTINUE ';'
 ;
 
 statement_list

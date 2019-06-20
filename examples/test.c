@@ -18,7 +18,7 @@ ENTITY * const * * const foo;
 function main();
 function main(int argc,char ** argv);
 export function main();
-export function main(int argc,char ** argv);
+export function main(int argc,c2har ** argv);
 export async function main();
 export async function main(int argc,char ** argv);
 
