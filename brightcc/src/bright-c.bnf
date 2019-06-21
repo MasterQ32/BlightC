@@ -72,29 +72,40 @@ type_qualifier ::= 'volatile' | 'const' | 'restrict' | 'atomic'
 
 pointer_type ::= <type> <_>? '*'
 
-struct_member_decl ::= <type> <_>? <id> ( <_>? ',' <_>? <id>)* <_>? ';'
+struct_member_name ::= <id> <_>? <array_size_specifier>?
+struct_member_decl ::= <type> <_>? <struct_member_name> ( <_>? ',' <_>? <struct_member_name>)* <_>? ';'
 
 struct_type ::= 'struct' <_>? <id>? (<_>? '{' <_>? (<struct_member_decl> <_>?)* '}')?
 
 type ::= <struct_type> | (<pointer_type> | <id>) (<_> <type_qualifier>)*
 
-expr_statement   ::= <expression>? <_>? ';'
-while_statement  ::= 'while' <_>? '(' <_>? <expression> <_>? ')' <_>? <statement>
-if_statement     ::= 'if'    <_>? '(' <_>? <expression> <_>? ')' <_>? <statement> (<_>? 'else' <_>? <statement>)?
-for_statement    ::= 'for'   <_>? '(' <_>? <expr_statement> <_>? <expr_statement> (<_>? <expression>)? <_>? ')' <_>? <statement>
-return_statement ::= 'return' (<_>? <expression>)? ';'
+expr_statement     ::= <expression>? <_>? ';'
+while_statement    ::= 'while'  <_>? '(' <_>? <expression> <_>? ')' <_>? <statement>
+switch_statement   ::= 'switch' <_>? '(' <_>? <expression> <_>? ')' <_>? <statement>
+if_statement       ::= 'if'     <_>? '(' <_>? <expression> <_>? ')' <_>? <statement> (<_>? 'else' <_>? <statement>)?
+for_statement      ::= 'for'    <_>? '(' <_>? <expr_statement> <_>? <expr_statement> (<_>? <expression>)? <_>? ')' <_>? <statement>
+return_statement   ::= 'return' (<_>? <expression>)? ';'
+labelled_statement ::= 'default' <_>? ':' | 'case' <_> <const_expression> <_>? ':'
 
-statement ::= <declaration> | <block> | <while_statement> | <if_statement> | <for_statement> | <return_statement> | <expr_statement>
+statement ::= <declaration> | <block> | <while_statement> | <if_statement> | <for_statement> | <return_statement> | <switch_statement> | <expr_statement> | <labelled_statement>
 
 block ::= '{' <_>? (<statement> <_>?)* '}'
 
 array_size_specifier ::= '[' <_>? <const_expression> <_>? ']'
 
-variable_declaration_init ::= <id> <array_size_specifier>? (<_>? '=' <_>? <const_expression>)?
+designation ::= (('[' <_>? <const_expression> <_>? ']' | '.' <_>? <id>) <_>?)+ '='
+
+initializer ::= <designation>? <_>? <const_expression>
+
+initializer_list ::= '{' <_>? <initializer> ( <_>? ',' <initializer> )* <_>? '}'
+
+variable_init ::= <const_expression> | <initializer_list>
+
+variable_declaration_init ::= <id> <array_size_specifier>? (<_>? '=' <_>? <variable_init>)?
 
 variable_declaration ::= <_>? (<storage_specifier> <_>)* <type> <_>? <variable_declaration_init> (<_>? ',' <_>? <variable_declaration_init>)* <_>? ';'
 
-parameter ::= <type> <_>? <id>
+parameter ::= <type> <_>? <id>?
 
 parameter_list ::= <_>? <parameter> <_>? (',' <_>? <parameter>)*
 

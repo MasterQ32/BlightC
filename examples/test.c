@@ -788,26 +788,26 @@ void game_init(void)
 
 void game_open(void)
 {
-	#ifdef GAME_OPEN_DEBUG
+//	#ifdef GAME_OPEN_DEBUG
 		cprintf1("\n game_open: START at frame %d, calling framework_load_level() now...", (int)total_frames);
-	#endif
+//	#endif
 	framework_load_level(NULL);
 
     sun_light = 100;
 
-	#ifdef GAME_OPEN_DEBUG
+//	#ifdef GAME_OPEN_DEBUG
 		cprintf0("\n - calling jpsMapLoadFromFile() now...");
-	#endif
+//	#endif
 	int loadResult = (jpsMapLoadFromFile("map0.txt") != NULL);
-	#ifdef GAME_OPEN_DEBUG
+//	#ifdef GAME_OPEN_DEBUG
 		cprintf1(" result: %d", loadResult);
 		cprintf0("\n - calling maploader_load() now...");
-	#endif
+//	#endif
 	maploader_load("the-core.png");
 
-	#ifdef GAME_OPEN_DEBUG
+//	#ifdef GAME_OPEN_DEBUG
 		cprintf0("\n - calling ui_game_open() now...");
-	#endif
+//	#endif
 	ui_game_open();
 	topdown_camera_open();
 
@@ -823,9 +823,9 @@ void game_open(void)
 
 	grid_open(50,50);
 	buildingPlacement_open();
-	#ifdef GAME_OPEN_DEBUG
+//	#ifdef GAME_OPEN_DEBUG
 		cprintf1("\n game_open: END at frame %d", (int)total_frames);
-	#endif
+//	#endif
 
     effects2d_open();
 
@@ -1858,11 +1858,11 @@ void ui_game_after_all()
 }
 
 var unit__dmgtable[UNIT_TABLESIZE] = {
-7,9,2,2,1,
-2,5,7,7,1,
-9,5,3,3,1,
-2,5,7,7,1,
-0,0,0,0,0
+    7,9,2,2,1,
+    2,5,7,7,1,
+    9,5,3,3,1,
+    2,5,7,7,1,
+    0,0,0,0,0
 };
 
 var unit_setTarget(ENTITY* ent, VECTOR* pos)
