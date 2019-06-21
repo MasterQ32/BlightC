@@ -3,5 +3,5 @@ CONFIG -= qt
 
 DISTFILES += \
   test.c \
-  huge-test.c
-
+  huge-test.c \
+  command-and-lotter.c

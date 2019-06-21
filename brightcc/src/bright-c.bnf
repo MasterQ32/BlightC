@@ -1,14 +1,5 @@
 #!emitnone
 #!emit declaration
-#!emit expression
-#!emit int_literal
-#!emit float_literal
-#!emit string_literal
-#!emit unary_expression
-#!emit cast
-#!emit multiplicative_expression
-#!emit additive_expression
-#!emit type
 
 _ ::= ([#x20] | [#x0A] | [#x0D] | [#xB] | [#x9] | '/*' (. - '*/')* '*/' | '//' (. - ([#0x0A] | [#0x0D]))*)+
 
@@ -70,14 +61,16 @@ storage_specifier ::= 'export' | 'static' | 'extern' | 'async'
 
 type_qualifier ::= 'volatile' | 'const' | 'restrict' | 'atomic'
 
-pointer_type ::= <type> <_>? '*'
+pointer_type ::= <qualified_type> <_>? '*'
 
-struct_member_name ::= <id> <_>? <array_size_specifier>?
+struct_member_name ::= ('*' <_>?)* <id> <_>? <array_size_specifier>?
 struct_member_decl ::= <type> <_>? <struct_member_name> ( <_>? ',' <_>? <struct_member_name>)* <_>? ';'
 
 struct_type ::= 'struct' <_>? <id>? (<_>? '{' <_>? (<struct_member_decl> <_>?)* '}')?
 
-type ::= <struct_type> | (<pointer_type> | <id>) (<_> <type_qualifier>)*
+qualified_type ::= ( <struct_type> | (<pointer_type> | <id>)) (<_> <type_qualifier>)*
+
+type ::= (<type_qualifier> <_>?)* <qualified_type>
 
 expr_statement     ::= <expression>? <_>? ';'
 while_statement    ::= 'while'  <_>? '(' <_>? <expression> <_>? ')' <_>? <statement>
@@ -93,11 +86,11 @@ block ::= '{' <_>? (<statement> <_>?)* '}'
 
 array_size_specifier ::= '[' <_>? <const_expression> <_>? ']'
 
-designation ::= (('[' <_>? <const_expression> <_>? ']' | '.' <_>? <id>) <_>?)+ '='
+designation ::= (('[' <_>? <const_expression> <_>? ']' | '.'? <_>? <id>) <_>?)+ '='
 
 initializer ::= <designation>? <_>? <const_expression>
 
-initializer_list ::= '{' <_>? <initializer> ( <_>? ',' <_>? <initializer> )* <_>? ','? <_>? '}'
+initializer_list ::= '{' <_>? <initializer> ( <_>? (',' | ';') <_>? <initializer> )* <_>? (',' | ';')? <_>? '}'
 
 variable_init ::= <const_expression> | <initializer_list>
 
@@ -107,9 +100,11 @@ variable_declaration ::= <_>? (<storage_specifier> <_>)* <type> <_>? <variable_d
 
 parameter ::= <type> <_>? <id>?
 
-parameter_list ::= <_>? <parameter> <_>? (',' <_>? <parameter>)*
+parameter_list ::= <_>? <parameter> <_>? (',' <_>? <parameter>)* (<_>? ',' <_>? '...')?
 
-function_declaration ::= <_>? (<storage_specifier> <_>)* <type> <_>? <id> <_>? '(' <parameter_list>? ')' <_>? ( ';' | <block> )
+function_attribute ::= (<_>? ("__cdecl" | "__stdcall") <_>?)+
+
+function_declaration ::= <_>? (<storage_specifier> <_>)* <type> <_>? <function_attribute>? <_>? <id> <_>? '(' <_>? <parameter_list>? <_>? ')' <_>? ( ';' | <block> )
 
 enum_item ::= <id> <_>? '=' <_>? <const_expression> | <id>
 
@@ -119,7 +114,7 @@ enum_declaration ::= 'enum' <_> <id> <_>? '{' <_>? <enum_items> <_>? '}' <_>? ';
 
 struct_declaration ::= <struct_type> ';'
 
-typedef_declaration ::= 'typedef' <_> <type> <_> <id> <_>? ';'
+typedef_declaration ::= 'typedef' <_> <type> <_>? <id> <_>? ';'
 
 
 declaration ::= <typedef_declaration> | <struct_declaration> | <variable_declaration> | <function_declaration> | <enum_declaration>
@@ -131,7 +126,7 @@ declaration ::= <typedef_declaration> | <struct_declaration> | <variable_declara
 
 
 
-
+preprocessor ::= '#' (. - ([#0x0A] | [#0x0D]))*
 
 # This "must" be last
-translation_unit ::= (<declaration> | <_>?)*
+translation_unit ::= (<declaration> | <preprocessor> | <_>?)*
