@@ -1,7 +1,11 @@
 #!emitnone
-#!emit declaration
+#!emit const_expression
+#!emit expression
 
-_ ::= ([#x20] | [#x0A] | [#x0D] | [#xB] | [#x9] | '/*' (. - '*/')* '*/' | '//' (. - ([#0x0A] | [#0x0D]))*)+
+
+preprocessor ::= '#' (. - ([#0x0A] | [#0x0D]))* ([#0x0A] | [#0x0D])*
+
+_ ::= (<preprocessor> | [#x20] | [#x0A] | [#x0D] | [#xB] | [#x9] | '/*' (. - '*/')* '*/' | '//' (. - ([#0x0A] | [#0x0D]))*)+
 
 id             ::= [A-Za-z_][A-Za-z0-9_]*
 
@@ -12,7 +16,7 @@ int_literal    ::= [0-9]+ | '0' [0-7]+
 float_literal  ::= [0-9]* '.' [0-9]+ | [0-9]+ '.' [0-9]*
 string_literal ::= '"' ((. - '"') | '\"')* '"'
 
-literal  ::= <float_literal> | <hex_literal> | <oct_literal> | <bin_literal> | <int_literal> | <string_literal>
+literal  ::= '*' | <float_literal> | <hex_literal> | <oct_literal> | <bin_literal> | <int_literal> | <string_literal>
 
 primary_expression ::= <id> | <literal> | '(' <_>? <expression> <_>? ')'
 
@@ -55,7 +59,10 @@ assignment_operator ::= '+=' | '-=' | '*=' | '/=' | '%=' | '<<=' | '>>=' | '&=' 
 
 const_expression ::= <conditional_expression>
 
-expression  ::= (<assignment_expression> <_>? ',' <_>?)* <assignment_expression>
+# comma operator? really?
+# expression  ::= (<assignment_expression> <_>? ',' <_>?)* <assignment_expression>
+# expression  ::= <assignment_expression> (<_>? ',' <_>? <assignment_expression>)*
+expression  ::= <assignment_expression>
 
 storage_specifier ::= 'export' | 'static' | 'extern' | 'async'
 
@@ -63,7 +70,7 @@ type_qualifier ::= 'volatile' | 'const' | 'restrict' | 'atomic'
 
 pointer_type ::= <qualified_type> <_>? '*'
 
-struct_member_name ::= ('*' <_>?)* <id> <_>? <array_size_specifier>?
+struct_member_name ::= ('*' <_>?)* <id> <_>? <array_size_specifier>*
 struct_member_decl ::= <type> <_>? <struct_member_name> ( <_>? ',' <_>? <struct_member_name>)* <_>? ';'
 
 struct_type ::= 'struct' <_>? <id>? (<_>? '{' <_>? (<struct_member_decl> <_>?)* '}')?
@@ -76,8 +83,10 @@ expr_statement     ::= <expression>? <_>? ';'
 while_statement    ::= 'while'  <_>? '(' <_>? <expression> <_>? ')' <_>? <statement>
 switch_statement   ::= 'switch' <_>? '(' <_>? <expression> <_>? ')' <_>? <statement>
 if_statement       ::= 'if'     <_>? '(' <_>? <expression> <_>? ')' <_>? <statement> (<_>? 'else' <_>? <statement>)?
-for_statement      ::= 'for'    <_>? '(' <_>? <expr_statement> <_>? <expr_statement> (<_>? <expression>)? <_>? ')' <_>? <statement>
-return_statement   ::= 'return' (<_>? <expression>)? ';'
+
+# uses dirty hack to actually allow the comma operator here
+for_statement      ::= 'for'    <_>? '(' <_>? <expr_statement> <_>? <expr_statement> (<_>? <expression_list>)? <_>? ')' <_>? <statement>
+return_statement   ::= 'return' (<_>? <expression>)? <_>? ';'
 labelled_statement ::= 'default' <_>? ':' | 'case' <_> <const_expression> <_>? ':'
 
 statement ::= <declaration> | <block> | <while_statement> | <if_statement> | <for_statement> | <return_statement> | <switch_statement> | <expr_statement> | <labelled_statement>
@@ -98,14 +107,41 @@ variable_declaration_init ::= <id> <array_size_specifier>? (<_>? '=' <_>? <varia
 
 variable_declaration ::= <_>? (<storage_specifier> <_>)* <type> <_>? <variable_declaration_init> (<_>? ',' <_>? <variable_declaration_init>)* <_>? ';'
 
+# Engine Object Support
+
 engine_object ::= 'PANEL' | 'TEXT' | 'VIEW' | 'VECTOR' | 'ENTITY' | 'MATERIAL'
 
-designation ::= (('[' <_>? <const_expression> <_>? ']' | '.'? <_>? <id>) <_>?)+ '='
+engine_designation ::= (('[' <_>? <const_expression> <_>? ']' | '.'? <_>? <id>) <_>?)+ '='
 
-engine_initializer ::=  <designation>? <_>? <const_expression> <_>? ';'
+engine_var_initializer ::= <initializer> # <id> <_>? '=' <_>? <const_expression>
 
-engine_initializer_list ::= '{' <_>? <engine_initializer>* <_>? '}'
+engine_expression ::= '*' | <const_expression>
 
+engine_expression_list ::= <engine_expression> (<_>? ',' <_>? <engine_expression>)*
+
+#button       (x, y, bmapOn, bmapOff, bmapOver,              functionClick, functionLeave, functionOver);
+#button_radio (x, y, bmapOn, bmapOff, bmapOver,              functionClick, functionLeave, functionOver);
+#button_toggle(x, y, bmapOn, bmapOff, bmapOver, bmapOverOff, functionClick, functionLeave, functionOver);
+
+
+#slider  (x, y, bmapScale, bmapKnob, min, max, var);
+#hslider (x, y, length,    bmapKnob, min, max, var);
+#vslider (x, y, length,    bmapKnob, min, max, var);
+
+#needle(x, y, bmap, cx, cy, angle, min, max, var);
+#window(x, y, dx, dy, bmap, varX, varY);
+#string(string1, string2...);
+
+engine_expr_param ::= <_>? <const_expression> <_>?
+
+#digits(x, y, format, font, factor, var);
+engine_fun_digits ::= 'digits' <_>? '(' <engine_expr_param> ',' <engine_expr_param> ',' <engine_expr_param> ',' <_>? ( '*' | <const_expression>) <_>? ',' <engine_expr_param> ',' <engine_expr_param> ',' <engine_expr_param> ',' <engine_expr_param> ')'
+
+engine_fun_initializer ::= <engine_fun_digits>| <id> <_>? '(' <_>? <engine_expression_list>? <_>? ')'
+
+engine_initializer ::= (<engine_var_initializer> | <engine_fun_initializer> )
+
+engine_initializer_list ::= '{' <_>? (<engine_initializer>  <_>? ';')* <_>? '}'
 
 object_declaration ::= <engine_object> <_>? '*' <_>? <id> <_>? '=' <_>? <engine_initializer_list>
 
@@ -137,7 +173,6 @@ declaration ::= <typedef_declaration> | <struct_declaration> | <object_declarati
 
 
 
-preprocessor ::= '#' (. - ([#0x0A] | [#0x0D]))*
 
 # This "must" be last
-translation_unit ::= (<declaration> | <preprocessor> | <_>?)*
+translation_unit ::= (<declaration> | <_>?)*
