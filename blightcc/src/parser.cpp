@@ -80,7 +80,7 @@ namespace /* private */
     {
         if(not grammar_data)
         {
-            auto const data = IO::load_file("/home/felix/projects/bright-c/brightcc/src/bright-c.bnf");
+            auto const data = IO::load_file("/home/felix/projects/bright-c/blightcc/src/blight-c.bnf");
             assert(data);
 
             dbex_ptr dbex(rpa_dbex_create(), rpa_dbex_destroy);

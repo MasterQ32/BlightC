@@ -33,4 +33,4 @@ HEADERS += \
 
 DISTFILES += \
   src/bison-parser.yy \
-  src/bright-c.bnf
+  src/blight-c.bnf

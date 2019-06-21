@@ -1,4 +1,4 @@
-# Bright-C
+# Blight-C
 
 Clone of the Lite-C language with some improvements over coroutine handling
 and modularisation.
@@ -132,7 +132,7 @@ Modules can ring-reference each other without further work.
   ```c
   struct VECTOR { var x, y, z; };
   VECTOR a = { 10, 20, 30 };
-  VECTOR b = { x=10, z=30 };
+  VECTOR b = { .x=10, .z=30 };
   ```
 - Introduction of `const`ness
 - Out-of-order declarations

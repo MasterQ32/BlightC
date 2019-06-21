@@ -98,6 +98,17 @@ variable_declaration_init ::= <id> <array_size_specifier>? (<_>? '=' <_>? <varia
 
 variable_declaration ::= <_>? (<storage_specifier> <_>)* <type> <_>? <variable_declaration_init> (<_>? ',' <_>? <variable_declaration_init>)* <_>? ';'
 
+engine_object ::= 'PANEL' | 'TEXT' | 'VIEW' | 'VECTOR' | 'ENTITY' | 'MATERIAL'
+
+designation ::= (('[' <_>? <const_expression> <_>? ']' | '.'? <_>? <id>) <_>?)+ '='
+
+engine_initializer ::=  <designation>? <_>? <const_expression> <_>? ';'
+
+engine_initializer_list ::= '{' <_>? <engine_initializer>* <_>? '}'
+
+
+object_declaration ::= <engine_object> <_>? '*' <_>? <id> <_>? '=' <_>? <engine_initializer_list>
+
 parameter ::= <type> <_>? <id>?
 
 parameter_list ::= <_>? <parameter> <_>? (',' <_>? <parameter>)* (<_>? ',' <_>? '...')?
@@ -117,7 +128,7 @@ struct_declaration ::= <struct_type> ';'
 typedef_declaration ::= 'typedef' <_> <type> <_>? <id> <_>? ';'
 
 
-declaration ::= <typedef_declaration> | <struct_declaration> | <variable_declaration> | <function_declaration> | <enum_declaration>
+declaration ::= <typedef_declaration> | <struct_declaration> | <object_declaration> | <variable_declaration> | <function_declaration> | <enum_declaration>
 
 
 

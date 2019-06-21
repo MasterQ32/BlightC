@@ -1,7 +1,7 @@
 TEMPLATE=subdirs
 
 SUBDIRS += \
-  brightcc \
+  blightcc \
   brightness \
   examples
 
