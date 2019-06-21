@@ -20,6 +20,12 @@ export function main(int argc,c2har ** argv);
 export async function main();
 export async function main(int argc,char ** argv);
 
+structname val =
+{
+    .x = 10,
+    .y = 10
+};
+
 void test_for()
 {
     for(i; i; i)
@@ -81,7 +87,6 @@ BMAP * maploader_terrain_digital_fancy = "terrain_street3.png";
 BMAP * maploader_terrain_digital_wall = "terrain_street5.png";
 BMAP * maploader_lava = "lava.png";
 
-/*
 MATERIAL * maploader_terrain_material =
 {
     .effect = "terrain.fx",
@@ -93,7 +98,6 @@ MATERIAL * maploader_water_material =
     .effect = "water.fx",
     .flags = PASS_SOLID | AUTORELOAD,
 };
-*/
 
 void maploader_pos_to_vec(VECTOR * v, int x, int y)
 {

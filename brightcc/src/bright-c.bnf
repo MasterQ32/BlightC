@@ -97,7 +97,7 @@ designation ::= (('[' <_>? <const_expression> <_>? ']' | '.' <_>? <id>) <_>?)+ '
 
 initializer ::= <designation>? <_>? <const_expression>
 
-initializer_list ::= '{' <_>? <initializer> ( <_>? ',' <initializer> )* <_>? '}'
+initializer_list ::= '{' <_>? <initializer> ( <_>? ',' <_>? <initializer> )* <_>? ','? <_>? '}'
 
 variable_init ::= <const_expression> | <initializer_list>
 
