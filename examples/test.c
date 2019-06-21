@@ -538,14 +538,14 @@ void grid_getState(int x, int y)
 }
 
 
-void grid_setState_byID(int id, state)
+void grid_setState_byID(int id, int state)
 {
 	grid_errorcheck(id);
 	grid_state[id] |= state;
 
 }
 
-void grid_resetState_byID(int id, state)
+void grid_resetState_byID(int id, int state)
 {
 	grid_errorcheck(id);
 	grid_state[id] &= ~state;

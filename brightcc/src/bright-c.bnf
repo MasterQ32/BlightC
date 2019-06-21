@@ -49,9 +49,9 @@ additive_expression       ::= <additive_expression> <_>? <additive_operator> <_>
 shift_expression        ::= (<additive_expression>     <_>? ("<<" | ">>") <_>?)*             <additive_expression>
 relational_expression   ::= (<shift_expression>        <_>? (">=" | ">" | "<=" | "<") <_>?)* <shift_expression>
 equality_expression     ::= (<relational_expression>   <_>? ("==" | "!=") <_>?)*             <relational_expression>
-and_expression          ::= (<equality_expression>     <_>? "&" <_>?)*                       <equality_expression>
-exclusive_or_expression ::= (<and_expression>          <_>? "^" <_>?)*                       <and_expression>
-inclusive_or_expression ::= (<exclusive_or_expression> <_>? "|" <_>?)*                       <exclusive_or_expression>
+and_expression          ::= (<equality_expression>     <_>? ("&" - "&&" - "&=") <_>?)*                       <equality_expression>
+exclusive_or_expression ::= (<and_expression>          <_>? ("^" - "^=") <_>?)*                       <and_expression>
+inclusive_or_expression ::= (<exclusive_or_expression> <_>? ("|" - "||" - "|=") <_>?)*                       <exclusive_or_expression>
 logical_and_expression  ::= (<inclusive_or_expression> <_>? "&&" <_>?)*                      <inclusive_or_expression>
 logical_or_expression   ::= (<logical_and_expression>  <_>? "||" <_>?)*                      <logical_and_expression>
 
@@ -98,7 +98,7 @@ parameter ::= <type> <_>? <id>
 
 parameter_list ::= <_>? <parameter> <_>? (',' <_>? <parameter>)*
 
-function_declaration ::= <_>? (<storage_specifier> <_>)* <type> <_> <id> <_>? '(' <parameter_list>? ')' <_>? ( ';' | <block> )
+function_declaration ::= <_>? (<storage_specifier> <_>)* <type> <_>? <id> <_>? '(' <parameter_list>? ')' <_>? ( ';' | <block> )
 
 enum_item ::= <id> <_>? '=' <_>? <const_expression> | <id>
 
