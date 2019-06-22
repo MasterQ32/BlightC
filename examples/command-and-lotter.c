@@ -7656,8 +7656,8 @@ void uimenu_update_chain(uimenu_window_t * window)
 
 uimenu_window_t * uimenu_window_create(var x, var y, var width, var height, char * title)
 {
-    uimenu_window_t * window = sys_malloc(((int)_sizeof(uimenu_window_t)));
-    memset(window, 0, ((int)_sizeof(uimenu_window_t)));
+    uimenu_window_t * window = sys_malloc(((int)sizeof(uimenu_window_t)));
+    memset(window, 0, ((int)sizeof(uimenu_window_t)));
     window->x = x;
     window->y = y;
     window->width = width + (4 * 2);
@@ -7698,8 +7698,8 @@ uimenu_window_t * uimenu_window_create_borderless(var x, var y, var width, var h
 
 uimenu_element_t * uimenu_element_create(int type, var x, var y, var width, var height)
 {
-    uimenu_element_t * element = sys_malloc(((int)_sizeof(uimenu_element_t)));
-    memset(element, 0, ((int)_sizeof(uimenu_element_t)));
+    uimenu_element_t * element = sys_malloc(((int)sizeof(uimenu_element_t)));
+    memset(element, 0, ((int)sizeof(uimenu_element_t)));
     element->type = type;
     element->x = x;
     element->y = y;
@@ -8745,8 +8745,8 @@ void credits_init()
         if(file_str_readto(f, fuckYouTypeString, 0, 512) < 0) {
             break;
         }
-        CreditsNode * curr = malloc(((int)_sizeof(CreditsNode)));
-        memset(curr, 0, ((int)_sizeof(CreditsNode)));
+        CreditsNode * curr = malloc(((int)sizeof(CreditsNode)));
+        memset(curr, 0, ((int)sizeof(CreditsNode)));
 
         if(str_cmp("h1", fuckYouTypeString)) {
             file_str_read(f, inputString);
@@ -11859,7 +11859,7 @@ D3DVECTOR* D3DXVec3Cross
     v.y = pV1->z * pV2->x - pV1->x * pV2->z;
     v.z = pV1->x * pV2->y - pV1->y * pV2->x;
 
-    memcpy(pOut,&v,((int)_sizeof(D3DVECTOR)));
+    memcpy(pOut,&v,((int)sizeof(D3DVECTOR)));
     return pOut;
 }
 
@@ -12477,7 +12477,7 @@ void maploader_load(char const * fileName)
 
  maploader.w = bmap_width(bmp);
  maploader.h = bmap_height(bmp);
- maploader.cells = sys_malloc(((int)_sizeof(maploader_cell)) * maploader.w * maploader.h);
+ maploader.cells = sys_malloc(((int)sizeof(maploader_cell)) * maploader.w * maploader.h);
 
  int x, y;
  for(x = 0; x < maploader.w; x++)
@@ -14035,7 +14035,7 @@ void grid_init()
 
 void grid_open(int xSize, int ySize)
 {
- grid_state = sys_malloc(((int)_sizeof(int))*xSize*ySize);
+ grid_state = sys_malloc(((int)sizeof(int))*xSize*ySize);
  grid_xSize = xSize;
  grid_ySize = ySize;
 
@@ -14783,7 +14783,7 @@ LIST* listAdd(LIST* current, void* data)
 {
  LIST* new;
 
- new = (LIST*)sys_malloc(((int)_sizeof(LIST)));
+ new = (LIST*)sys_malloc(((int)sizeof(LIST)));
  new->data = data;
  new->next = current;
 
@@ -14794,7 +14794,7 @@ LIST* listAddTileSorted(LIST* current, TILE* tile, int sortMethod)
 {
  LIST* new, *first = current, *prev = 0;
 
- new = (LIST*)sys_malloc(((int)_sizeof(LIST)));
+ new = (LIST*)sys_malloc(((int)sizeof(LIST)));
  new->data = tile;
  new->next = 0;
 
@@ -14885,11 +14885,11 @@ UNIT* jpsAllowMovementForEntity(ENTITY* ptr, int allow)
 
 JPSPATH *jpsPathCreate(int maxLength)
 {
- JPSPATH *jpsPath = (JPSPATH*)sys_malloc(((int)_sizeof(JPSPATH)));
- memset(jpsPath, 0, ((int)_sizeof(JPSPATH)));
+ JPSPATH *jpsPath = (JPSPATH*)sys_malloc(((int)sizeof(JPSPATH)));
+ memset(jpsPath, 0, ((int)sizeof(JPSPATH)));
  jpsPath->maxLength = maxLength;
- jpsPath->tiles = (TILE**)sys_malloc(((int)_sizeof(TILE*)) * maxLength);
- memset(jpsPath->tiles, 0, ((int)_sizeof(TILE*)) * maxLength);
+ jpsPath->tiles = (TILE**)sys_malloc(((int)sizeof(TILE*)) * maxLength);
+ memset(jpsPath->tiles, 0, ((int)sizeof(TILE*)) * maxLength);
 
  return jpsPath;
 }
@@ -14928,11 +14928,11 @@ MAP* mapGetCurrent()
 
 MAP *mapCreate(int sizeX, int sizeY, VECTOR *vMin, VECTOR *vMax, var tileSize)
 {
- MAP *map = (MAP*)sys_malloc(((int)_sizeof(MAP)));
- memset(map, 0, ((int)_sizeof(MAP)));
+ MAP *map = (MAP*)sys_malloc(((int)sizeof(MAP)));
+ memset(map, 0, ((int)sizeof(MAP)));
  map->size[0] = sizeX;
  map->size[1] = sizeY;
- map->tiles = (TILE*)sys_malloc(((int)_sizeof(TILE)) * map->size[0] * map->size[1]);
+ map->tiles = (TILE*)sys_malloc(((int)sizeof(TILE)) * map->size[0] * map->size[1]);
  mapTilesInitialize(map);
  map->bmp = bmap_createblack(map->size[0], map->size[1], 24);
  map->jpsPath = jpsPathCreate(4*sizeX);
@@ -15181,7 +15181,7 @@ void mapTileCalculateVisibilityForTile(MAP* map, TILE* sourceTile)
 
  if(sourceTile->numNeighbors > 0)
  {
-  sourceTile->neighborCost = (int*)sys_malloc(((int)_sizeof(int))*sourceTile->numNeighbors);
+  sourceTile->neighborCost = (int*)sys_malloc(((int)sizeof(int))*sourceTile->numNeighbors);
   int i = 0;
   listCurrent = sourceTile->neighborList;
   while(listCurrent)
@@ -15908,8 +15908,8 @@ UNIT* jpsUnitCreate(int playerID, int unitType, ENTITY* ent)
 {
  MAP* map = mapGetCurrent();
  if(playerID < 0 || playerID >= 2) error("jpsUnitCreate: bad playerID!");
- UNIT *unit = (UNIT*)sys_malloc(((int)_sizeof(UNIT)));
- memset(unit, 0, ((int)_sizeof(UNIT)));
+ UNIT *unit = (UNIT*)sys_malloc(((int)sizeof(UNIT)));
+ memset(unit, 0, ((int)sizeof(UNIT)));
  unit->ent = ent;
  unit->isActive = 1;
  unit->playerID = playerID;
@@ -16251,7 +16251,7 @@ void fow_open()
 
  MAP *map = mapGetCurrent();
 
- fow_borderCells = sys_malloc(((int)_sizeof(TILE*))*map->size[0]*map->size[1]);
+ fow_borderCells = sys_malloc(((int)sizeof(TILE*))*map->size[0]*map->size[1]);
  fow_borderCells_IDX = 0;
 
  int x, y;
@@ -16280,7 +16280,7 @@ void fow_setBorder(TILE *tile)
  if(tile->visibility & 2)
   return;
 
- tile->visibility |= 2;´
+ tile->visibility |= 2;
  fow_borderCells[fow_borderCells_IDX] = tile;
  fow_borderCells_IDX++;
 }
@@ -16924,7 +16924,7 @@ void effects2d_spawn(VECTOR * worldpos, int type)
 
 void ai_reset(int difficulty)
 {
- memset(aiSystemInstance, 0, ((int)_sizeof(AI_SYSTEM)));
+ memset(aiSystemInstance, 0, ((int)sizeof(AI_SYSTEM)));
  aiSystemInstance->difficulty = difficulty;
  aiSystemInstance->money = 10000;
  aiSystemInstance->escalationCounter = 0;
@@ -16937,8 +16937,8 @@ void ai_reset(int difficulty)
 
 void ai_init(int difficulty)
 {
- aiSystemInstance = (AI_SYSTEM*)sys_malloc(((int)_sizeof(AI_SYSTEM)));
- memset(aiSystemInstance, 0, ((int)_sizeof(AI_SYSTEM)));
+ aiSystemInstance = (AI_SYSTEM*)sys_malloc(((int)sizeof(AI_SYSTEM)));
+ memset(aiSystemInstance, 0, ((int)sizeof(AI_SYSTEM)));
  ai_reset(difficulty);
 }
 
