@@ -1,5 +1,5 @@
-#import acknex // similar to #include, but uses private/public system also: uses folders
-#import default
+import acknex; // similar to #include, but uses private/public system also: uses folders
+import acknex.default;
 
 // these are fuckers, how to solve this?
 PANEL * pan_mainmenu = 
@@ -8,14 +8,14 @@ PANEL * pan_mainmenu =
 	flags = 10;
 }
 
-public void foo() // is visible from the "outside" of this module
+export void foo() // is visible from the "outside" of this module
 {
 	error("hello, world!");
 }
 
-public int value; // is also visible
+export int value; // is also visible
 
-action foo() async // is spawned as an implicit coroutine when called (returns coro_handle instead of void)
+async action foo() // is spawned as an implicit coroutine when called (returns async coro_handle instead of void)
 {
 	while(1)
 	{

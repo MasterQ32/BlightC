@@ -4,7 +4,9 @@
 #include <cassert>
 #include <memory>
 #include <iostream>
+#include <rpa/rpa.h>
 #include <rpa/rpadbex.h>
+#include <rpa/rpastat.h>
 
 namespace /* private */
 {
@@ -128,7 +130,10 @@ bool Parser::parse(std::string const & fileData)
     std::unique_ptr<rarray_t, decltype(&rpa_records_destroy)> records(rpa_records_create(), rpa_records_destroy);
     assert(records);
 
-    auto const start_rule = rpa_dbex_lookup_s(dbex(), "translation_unit");
+    auto const start_rule = enable_blightc
+        ? rpa_dbex_lookup_s(dbex(), "blightc_translation_unit")
+        : rpa_dbex_lookup_s(dbex(), "lightc_translation_unit")
+        ;
 
     auto const parse_error = rpa_stat_parse(
         stat,
@@ -148,17 +153,19 @@ bool Parser::parse(std::string const & fileData)
 
     for (int i = 0; i < rpa_records_length(records.get()); i++) {
         auto record = rpa_records_slot(records.get(), i);
-        if (record->type == RPA_RECORD_START)
-            fprintf(stdout, "RPA_RECORD_START   (UID: %d)  ", record->ruleuid);
-        if (record->type == RPA_RECORD_END)
-            fprintf(stdout, "RPA_RECORD_END     (UID: %d)  ", record->ruleuid);
+
+
+//        if (record->type == RPA_RECORD_START)
+//            fprintf(stdout, "RPA_RECORD_START   (UID: %d)  ", record->ruleuid);
+//        if (record->type == RPA_RECORD_END)
+//            fprintf(stdout, "RPA_RECORD_END     (UID: %d)  ", record->ruleuid);
         /*
          * record->rule points to memory allocated by rpadbex_t,
          * make sure rpadbex_t object is not destroyed while accessing this pointer.
          */
-        fprintf(stdout, "%s: ", record->rule);
-        fwrite(record->input, 1, record->inputsiz, stdout);
-        fprintf(stdout, "\n");
+//        fprintf(stdout, "%s: ", record->rule);
+//        fwrite(record->input, 1, record->inputsiz, stdout);
+//        fprintf(stdout, "\n");
     }
 
     if(parse_error == 0) {

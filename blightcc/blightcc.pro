@@ -14,6 +14,9 @@ linux: {
   LIBS += -L$$quote($$RPATK_ROOT/rpa/build/unix/x86_64/out) -lrpa
   LIBS += -L$$quote($$RPATK_ROOT/rvm/build/unix/x86_64/out) -lrvm
   LIBS += -L$$quote($$RPATK_ROOT/rlib/build/unix/x86_64/out) -lrlib
+
+  QMAKE_CXXFLAGS += $$system(llvm-config --cxxflags)
+  LIBS           += $$system(llvm-config --cxxflags --ldflags --system-libs --libs core)
 }
 
 SOURCES += \
@@ -29,7 +32,8 @@ HEADERS += \
   src/c_lexer.h \
   src/codegen.hpp \
   src/io.hpp \
-  src/parser.hpp
+  src/parser.hpp \
+  src/types.hpp
 
 DISTFILES += \
   src/bison-parser.yy \

@@ -1,6 +1,6 @@
 #include "ast.hpp"
 
-AST::AST()
+Ast::Node::~Node()
 {
 
 }

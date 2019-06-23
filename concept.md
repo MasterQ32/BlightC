@@ -24,7 +24,7 @@ Marking a function with `async` will enforce the function to be always called
 as a new coroutine:
 
 ```
-void bar() async
+async void bar()
 {
 	while(1)
 	{
@@ -44,7 +44,7 @@ all functions that include a call to `wait` as `async`.
 Another keyword allows awaiting another coroutine: `await`.
 
 ```c
-int foo() async
+async int foo()
 {
 	for(int i = 0; i < 10; i++)
 	{

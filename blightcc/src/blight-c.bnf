@@ -172,10 +172,11 @@ declaration ::= <typedef_declaration> | <struct_declaration> | <object_declarati
 
 
 
-
+import_declaration ::= 'import' <_> <id> ( <_>? '.' <_>? <id>)* ';'
 
 
 
 
 # This "must" be last
-translation_unit ::= (<declaration> | <_>?)*
+lightc_translation_unit  ::= (<declaration> | <_>?)*
+blightc_translation_unit ::= (<import_declaration> | <lightc_translation_unit>)*

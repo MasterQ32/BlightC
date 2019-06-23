@@ -5,8 +5,7 @@
 #include <map>
 #include <queue>
 
-#include <rpa/rpa.h>
-#include <rpa/rpastat.h>
+extern "C" typedef struct rpastat_s rpastat_t;
 
 struct Parser
 {
@@ -20,6 +19,8 @@ public:
 
 
     bool parse(std::string const & fileData);
+
+    bool enable_blightc = true;
 };
 
 #endif // PARSER_HPP
